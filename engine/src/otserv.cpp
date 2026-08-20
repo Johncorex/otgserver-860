@@ -126,10 +126,10 @@ void printServerVersion()
 #endif
 
     startupMsg << hrLine;
-    startupMsg << "- " << "A server developed by " << console::setColor(console::developers, "Johncore, Mark Samman and Mateuskl (Mateus Roberto)") << std::endl;
-    startupMsg << "- " << "Engine Credits for: " << console::setColor(console::developers, "TFS Team, Erick Nunes, Leo Pereira, Marson Schneider, LukST, worthdavi, OTX Team, OTG Team") << std::endl;
-    startupMsg << "- " << "Based on TFS 1.4 (Protocol 1100), heavily modified by " << console::setColor(console::error, "Mateus Roberto") << std::endl;
-    startupMsg << "- " << "Visit our community: " << console::setColor(console::community, "https://github.com/Mateuzkl") << " and " << console::setColor(console::community, "https://github.com/otg-br") << std::endl;
+    startupMsg << "- " << "A server developed by " << console::setColor(console::developers, "Johncorex") << std::endl;
+    startupMsg << "- " << "Engine Credits for: " << console::setColor(console::developers, "Otg colaborators, Erick Nunes, Mateus Roberto, Leo Pereira, Marson Schneider, LukST, worthdavi, TFS Team") << std::endl;
+    startupMsg << "- " << "Based on TFS 1.5 protocol 860 developed by " << console::setColor(console::error, "Johncorex") << std::endl;
+    startupMsg << "- " << "Visit our community: " << console::setColor(console::community, "https://github.com/Johncorex/") << " e " << console::setColor(console::community, "https://github.com/otg-br") << std::endl;
     startupMsg << hrLine;
     std::cout << startupMsg.str() << std::flush;
 
