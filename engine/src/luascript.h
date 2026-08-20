@@ -268,9 +268,6 @@ class LuaScriptInterface
         static int luaPlayerInEffectLowBlow(lua_State* L);
         static int luaPlayerSetEffectLowBlow(lua_State* L);
 
-        static int luaPlayerSendBestiaryTracker(lua_State* L);
-        static int luaPlayerMonsterInTracker(lua_State* L);
-
         static int luaPlayerGetProxyInfo(lua_State* L);
 
         // Autoloot by LukSrT
@@ -600,10 +597,6 @@ class LuaScriptInterface
 		// Boost
 		static int luaGameGetBoostMonster(lua_State* L);
 		static int luaGameSetBoostMonster(lua_State* L);
-
-		static int luaGameGetBestiaries(lua_State* L);
-		static int luaGameGetBestiary(lua_State* L);
-		static int luaGameGetCharms(lua_State* L);
 
 		// sell
 		static int luaGameIsValidPassword(lua_State* L);
@@ -1069,8 +1062,6 @@ class LuaScriptInterface
 		static int luaPlayerCastSpell(lua_State* L);
 		static int luaPlayerUseItemEx(lua_State* L);
 
-		static int luaPlayerSendImbuementPanel(lua_State* L);
-
 		static int luaPlayerSendTutorial(lua_State* L);
 		static int luaPlayerAddMapMark(lua_State* L);
 
@@ -1080,18 +1071,6 @@ class LuaScriptInterface
 		static int luaPlayerIsPzLocked(lua_State* L);
 
 		static int luaPlayerGetClient(lua_State* L);
-
-		static int luaPlayerGetBestiaryKill(lua_State* L);
-		static int luaPlayerAddBestiaryKill(lua_State* L);
-		static int luaPlayerGainedCharmPoints(lua_State* L);
-
-		static int luaPlayerSetCharmPoints(lua_State* L);
-		static int luaPlayerGetCharmPoints(lua_State* L);
-		static int luaPlayerAddCharm(lua_State* L);
-		static int luaPlayerRemoveCharm(lua_State* L);
-		static int luaPlayerGetCurrentCreature(lua_State* L);
-		static int luaPlayerGetMonsterCharm(lua_State* L);
-		static int luaPlayerIsUnlockedCharm(lua_State* L);
 
 		static int luaPlayerGetArmor(lua_State* L);
 		static int luaPlayerGetDefense(lua_State* L);
@@ -1681,30 +1660,12 @@ class LuaScriptInterface
 		// exclusively for wands & distance weapons
 		static int luaWeaponShootType(lua_State* L);
 
-		// Imbuement
-		static int luaCreateImbuement(lua_State* L);
-		static int luaImbuementGetName(lua_State* L);
-		static int luaImbuementGetId(lua_State* L);
-		static int luaImbuementGetItems(lua_State* L);
-		static int luaImbuementGetBase(lua_State* L);
-		static int luaImbuementGetCategory(lua_State* L);
-		static int luaImbuementIsPremium(lua_State* L);
-		static int luaImbuementGetElementDamage(lua_State* L);
-		static int luaImbuementGetCombatType(lua_State* L);
-
 		// mounts
 		static int luaCreateMount(lua_State* L);
 		static int luaMountGetName(lua_State* L);
 		static int luaMountGetId(lua_State* L);
 		static int luaMountGetClientId(lua_State* L);
 		static int luaMountGetSpeed(lua_State* L);
-
-		// bestiary
-		static int luaCreateBestiary(lua_State* L);
-		static int luaBestiaryGetName(lua_State* L);
-		static int luaBestiaryGetRaceByID(lua_State* L);
-		static int luaBestiaryGetDifficulty(lua_State* L);
-		static int luaBestiaryGetRaces(lua_State* L);
 
 		//
 		lua_State* luaState = nullptr;

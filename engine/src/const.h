@@ -1,4 +1,4 @@
-/**
+﻿/**
  * The Forgotten Server - a free and open-source MMORPG server emulator
  * Copyright (C) 2019 Mark Samman <mark.samman@gmail.com>
  *
@@ -642,7 +642,6 @@ enum PlayerFlags : uint64_t {
 enum ReloadTypes_t : uint8_t  {
 	RELOAD_TYPE_ALL,
 	RELOAD_TYPE_ACTIONS,
-	RELOAD_TYPE_BESTIARY,
 	RELOAD_TYPE_CHAT,
 	RELOAD_TYPE_COMMANDS,
 	RELOAD_TYPE_CONFIG,
@@ -663,7 +662,6 @@ enum ReloadTypes_t : uint8_t  {
 	RELOAD_TYPE_TALKACTIONS,
 	RELOAD_TYPE_WEAPONS,
 	RELOAD_TYPE_STORE,
-	RELOAD_TYPE_IMBUEMENTS,
 	RELOAD_TYPE_FREE_PASS,
 };
 

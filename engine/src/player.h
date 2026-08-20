@@ -38,7 +38,6 @@
 #include "mounts.h"
 #include "reward.h"
 #include "rewardchest.h"
-#include "imbuements.h"
 #include "prey.h"
 
 class House;
@@ -50,7 +49,6 @@ class Party;
 class SchedulerTask;
 class Bed;
 class Guild;
-class Imbuement;
 class StoreOffers;
 
 enum skillsid_t {
@@ -408,31 +406,6 @@ class Player final : public Creature, public Cylinder
 		void addAccountStorageValue(const uint32_t key, const int32_t value);
 		bool getAccountStorageValue(const uint32_t key, int32_t& value) const;
 
-		void addBestiaryKill(uint16_t racedid, int32_t value, bool gained);
-		bool getBestiaryKill(uint16_t racedid, int32_t value) const;
-		int32_t getBestiaryKills(uint16_t racedid);
-
-		bool gainedCharmPoints(uint16_t racedid);
-		uint16_t getCurrentCreature(uint8_t charmid);
-		int8_t getMonsterCharm(uint16_t racedid);
-		bool isUnlockedCharm(uint8_t charmid) {
-			auto it = charmMap.find(charmid);
-			return it != charmMap.end();
-		}
-
-		bool hasCharmExpansion() {
-			return charmExpansion;
-		}
-		void setCharmExpansion(bool v) {
-			charmExpansion = v;
-		}
-		uint32_t getCharmPrice() {
-			uint32_t value = (level * ((charmExpansion ? 75 : 100)));
-			return value;
-		}
-		void addCharm(uint8_t charmid, uint16_t raceid = 0);
-		void removeCharm(uint8_t charmid, bool remove = false);
-
 		void setGroup(Group* newGroup) {
 			group = newGroup;
 		}
@@ -602,18 +575,6 @@ class Player final : public Creature, public Cylinder
 		}
 		int32_t getProxyId() {
 			return proxyId;
-		}
-		uint32_t getCharmPoints() const {
-			return charmPoints;
-		}
-		void setCharmPoints(uint32_t newvalue) {
-			charmPoints = newvalue;
-		}
-		uint16_t getLastBestiaryMonster() const {
-			return lastBestiaryMonster;
-		}
-		void setLastBestiaryMonster(uint16_t newvalue) {
-			lastBestiaryMonster = newvalue;
 		}
 
 		Item* getInventoryItem(slots_t slot) const;
@@ -1285,36 +1246,6 @@ class Player final : public Creature, public Cylinder
 				client->sendOutfitWindow();
 			}
 		}
-		void sendImbuementWindow(Item* item) {
-			if (client) {
-				client->sendImbuementWindow(item);
-			}
-		}
-		void sendBestiaryGroups() {
-			if (client) {
-				client->sendBestiaryGroups();
-			}
-		}
-		void sendBestiaryOverview(std::string& name) {
-			if (client) {
-				client->sendBestiaryOverview(name);
-			}
-		}
-		void sendBestiaryOverview(std::vector<uint16_t> monsters) {
-			if (client) {
-				client->sendBestiaryOverview(monsters);
-			}
-		}
-		void sendBestiaryMonsterData(uint16_t monsterId) {
-			if (client) {
-				client->sendBestiaryMonsterData(monsterId);
-			}
-		}
-		void sendCharmData() {
-			if (client) {
-				client->sendCharmData();
-			}
-		}
 		void sendCloseContainer(uint8_t cid) {
 			if (client) {
 				client->sendCloseContainer(cid);
@@ -1370,12 +1301,6 @@ class Player final : public Creature, public Cylinder
 		void sendNetworkMessage(const NetworkMessage& message, bool broadcast = true) {
 			if (client) {
 				client->writeToOutputBuffer(message, broadcast);
-			}
-		}
-
-		void sendBestiaryTracker() {
-			if (client) {
-				client->sendBestiaryTracker();
 			}
 		}
 
@@ -1627,17 +1552,12 @@ class Player final : public Creature, public Cylinder
 			return idleTime;
 		}
 
-		void onEquipImbueItem(Imbuement* imbuement);
-		void onDeEquipImbueItem(Imbuement* imbuement);
 		StreakBonus_t getStreakDaysBonus()const;
 		//Custom: Anti bug do market
 		bool isMarketExhausted() const;
 		void updateMarketExhausted() {
 			lastMarketInteraction = OTSYS_TIME();
 		}
-
-		void manageMonsterTracker(uint16_t raceid);
-		bool monsterInTracker(uint16_t raceid);
 
 		bool isQuickLootListedItem(const Item* item) const {
 			if (getProtocolVersion() >= 1150) {
@@ -1728,12 +1648,6 @@ class Player final : public Creature, public Cylinder
 		uint32_t getHelmetCooldownReduction() const;
 		void setHelmetCooldownReduction(uint32_t reduction);
 
-		void updateImbuementTrackerStats() const;
-		void sendInventoryImbuements(const std::map<slots_t, Item*> items) const {
-			if (client) {
-				client->sendInventoryImbuements(items);
-			}
-		}
 	protected:
 		std::forward_list<Condition*> getMuteConditions() const;
 
@@ -1796,12 +1710,6 @@ class Player final : public Creature, public Cylinder
 		std::unordered_map<uint32_t, int32_t> storageMap;
 		std::map<uint32_t, int32_t> accountStorageMap;
 		std::map<uint8_t, int64_t> moduleDelayMap;
-
-		std::map<uint16_t, BestiaryPoints> bestiaryKills;
-
-		std::unordered_map<uint8_t, uint16_t> charmMap;
-
-		std::vector<uint16_t> bestiaryTracker;
 
 		std::map<uint32_t, Reward*> rewardMap;
 		std::map<ObjectCategory_t, Container*> quickLootContainers;
@@ -1921,11 +1829,9 @@ class Player final : public Creature, public Cylinder
 		int32_t coinBalance = 0;
 		int32_t tournamentCoinBalance = 0;
 		int32_t proxyId = 0;
-		uint32_t charmPoints = 0;
 		int16_t deathTime = 0;
 		uint16_t expBoostStamina = 0;
 		uint16_t entriesPerPage = 26;
-		bool charmExpansion = false;
 
 		uint16_t lastTimeStamina = 0;
 		uint16_t lastStatsTrainingTime = 0;
@@ -1938,7 +1844,6 @@ class Player final : public Creature, public Cylinder
 		uint16_t grindingXpBoost = 0;
 		uint16_t storeXpBoost = 0;
 		uint16_t staminaXpBoost = 100;
-		uint16_t lastBestiaryMonster = 0;
 		int16_t lastDepotId = -1;
 
 		uint8_t soul = 0;
@@ -1968,8 +1873,6 @@ class Player final : public Creature, public Cylinder
 		bool updatingSaleItemList = false;
 		bool logged = false;
 		bool inventoryAbilities[CONST_SLOT_LAST + 1] = {};
-		bool imbuementTrackerWindowOpen = false;
-
 		static uint32_t playerCombatAutoID;
 		static uint32_t playerAutoID;
 		static uint32_t maxPlayerAutoID;

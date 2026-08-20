@@ -1,4 +1,4 @@
-/**
+﻿/**
  * The Forgotten Server - a free and open-source MMORPG server emulator
  * Copyright (C) 2019 Mark Samman <mark.samman@gmail.com>
  *
@@ -24,8 +24,7 @@
 
 #include "actions.h"
 #include "bed.h"
-#include "bestiary.h"
-#include "charm.h"
+
 #include "configmanager.h"
 #include "creature.h"
 #include "creatureevent.h"
@@ -45,13 +44,11 @@
 #include "weapons.h"
 #include "script.h"
 #include "modules.h"
-#include "imbuements.h"
 #include "store.h"
 
 extern ConfigManager g_config;
 extern Actions* g_actions;
 extern Chat* g_chat;
-extern Charms g_charms;
 extern TalkActions* g_talkActions;
 extern Spells* g_spells;
 extern Vocations g_vocations;
@@ -63,8 +60,6 @@ extern MoveEvents* g_moveEvents;
 extern Weapons* g_weapons;
 extern Scripts* g_scripts;
 extern Modules* g_modules;
-extern Imbuements g_imbuements;
-extern Bestiaries g_bestiaries;
 extern Store g_store;
 
 Game::Game()
@@ -99,7 +94,6 @@ void Game::start(ServiceManager* manager)
 
 	g_scheduler.addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL, std::bind(&Game::checkLight, this)));
 	g_scheduler.addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL, std::bind(&Game::checkCreatures, this, 0)));
-	g_scheduler.addEvent(createSchedulerTask(EVENT_IMBUEMENTINTERVAL, std::bind(&Game::checkImbuements, this)));
 
 }
 
@@ -3717,18 +3711,6 @@ void Game::playerBuyStoreOffer(uint32_t playerId, const StoreOffer& offer, std::
 	} else if (offerType == OFFER_TYPE_PROMOTION) {
 		player->sendStoreError(STORE_ERROR_PURCHASE, "This offer has disable.");
 		return;
-	} else if (offerType == OFFER_TYPE_CHARM_EXPANSION) {
-		if (player->hasCharmExpansion()) {
-			player->sendStoreError(STORE_ERROR_PURCHASE, "You have charm expansion");
-			return;
-		}
-
-		player->setCharmExpansion(true);
-		returnmessage << "You've successfully bought the " << thisOffer->getName() <<".";
-		successfully = true;
-	} else if (offerType == OFFER_TYPE_CHARM_POINTS) {
-		player->setCharmPoints( player->getCharmPoints() + thisOffer->getCount());
-		successfully = true;
 	} else if (offerType == OFFER_TYPE_BLESS_RUNE) {
 		player->addStorageValue(PSTRG_BLESS_RUNA, OS_TIME(nullptr) + (24 * 60 * 60));
 		successfully = true;
@@ -5025,65 +5007,6 @@ void Game::playerRequestEditVip(uint32_t playerId, uint32_t guid, const std::str
 	player->editVIP(guid, description, icon, notify);
 }
 
-void Game::playerApplyImbuement(uint32_t playerId, uint32_t imbuementid, uint8_t slot, bool protectionCharm)
-{
-	Player* player = getPlayerByID(playerId);
-	if (!player) {
-		return;
-	}
-
-	if (!player->inImbuing()) {
-		return;	
-	}
-
-	Imbuement* imbuement = g_imbuements.getImbuement(imbuementid);
-	if(!imbuement) {
-		return;
-	}
-
-	Item* item = player->imbuing;
-	if(item == nullptr) {
-		return;
-	}
-	
-	if (item->getTopParent() != player || item->getParent() == player) {
-        return;
-    }
-
-	g_events->eventPlayerOnApplyImbuement(player, imbuement, item, slot, protectionCharm);
-}
-
-void Game::playerClearingImbuement(uint32_t playerid, uint8_t slot)
-{
-	Player* player = getPlayerByID(playerid);
-	if (!player) {
-		return;
-	}
-
-	if (!player->inImbuing()) {
-		return;	
-	}
-
-	Item* item = player->imbuing;
-	if(item == nullptr) {
-		return;
-	}
-
-	g_events->eventPlayerClearImbuement(player, item, slot);
-	return;
-}
-
-void Game::playerCloseImbuingWindow(uint32_t playerid)
-{
-	Player* player = getPlayerByID(playerid);
-	if (!player) {
-		return;
-	}
-
-	player->inImbuing(nullptr);
-	return;
-}
-
 void Game::playerTurn(uint32_t playerId, Direction dir)
 {
 	Player* player = getPlayerByID(playerId);
@@ -6001,11 +5924,6 @@ bool Game::combatChangeHealth(Creature* attacker, Creature* target, CombatDamage
 			g_events->eventCreatureOnDrainHealth(target, attacker, damage.primary.type, damage.primary.value, damage.secondary.type, damage.secondary.value, message.primary.color, message.secondary.color);
 		}
 
-		// // imbuement
-		// if (attackerPlayer) {
-			
-		// }
-
 		int32_t healthChange = damage.primary.value + damage.secondary.value;
 		if (healthChange == 0) {
 			return true;
@@ -6198,22 +6116,6 @@ bool Game::combatChangeHealth(Creature* attacker, Creature* target, CombatDamage
 						hasParent = true;
 						ss << " (active prey bonus";
 					}
-					if (damage.origin == ORIGIN_CHARM && targetMonster) {
-						int8_t charmid = tmpPlayer->getMonsterCharm(targetMonster->getRaceId());
-						if (charmid > -1) {
-							Charm* charm = g_charms.getCharm(charmid);
-							if (charm) {
-								if (!hasParent) {
-									hasParent = true;
-									ss << " (";
-								} else {
-									ss << " and ";
-								}
-
-								ss << "active charm '" << charm->getName() << '\'';
-							}
-						}
-					}
 					if (hasParent) {
 						ss << ")";
 					}
@@ -6232,23 +6134,6 @@ bool Game::combatChangeHealth(Creature* attacker, Creature* target, CombatDamage
 						if (targetPlayer && targetPlayer->hasActivePreyBonus(BONUS_DAMAGE_REDUCTION, attacker)) {
 							ss << " (active prey bonus";
 							hasParent = true;
-						}
-						Monster* attackerMonster = attacker ? attacker->getMonster() : nullptr;
-						if (damage.origin == ORIGIN_CHARM && attackerMonster) {
-							int8_t charmid = tmpPlayer->getMonsterCharm(attackerMonster->getRaceId());
-							if (charmid > -1) {
-								Charm* charm = g_charms.getCharm(charmid);
-								if (charm) {
-									if (!hasParent) {
-										hasParent = true;
-										ss << " (";
-									} else {
-										ss << " and ";
-									}
-
-									ss << "active charm '" << charm->getName() << '\'';
-								}
-							}
 						}
 						if (hasParent) {
 							ss << ")";
@@ -6603,74 +6488,6 @@ void Game::internalDecayItem(Item* item)
 	}
 }
 
-void Game::checkImbuements()
-{
-	g_scheduler.addEvent(createSchedulerTask(EVENT_IMBUEMENTINTERVAL, std::bind(&Game::checkImbuements, this)));
-
-	size_t bucket = (lastImbuedBucket + 1) % EVENT_IMBUEMENT_BUCKETS;
-
-	auto it = imbuedItems[bucket].begin(), end = imbuedItems[bucket].end();
-	while (it != end) {
-		Item* item = *it;
-		if (item->isRemoved() || !item->getParent()->getCreature()) {
-			ReleaseItem(item);
-			it = imbuedItems[bucket].erase(it);
-			continue;
-		}
-
-		Player* player = item->getHoldingPlayer();
-		if (!player) {
-			ReleaseItem(item);
-			it = imbuedItems[bucket].erase(it);
-			continue;
-		}
-
-		bool hasImbue = false;
-		uint8_t slots = Item::items[item->getID()].imbuingSlots;
-		for (uint8_t slot = 0; slot < slots; slot++) {
-			uint32_t info = item->getImbuement(slot);
-			int32_t id = info & 0xFF;
-			if (id == 0) {
-				continue;
-			}
-
-			int32_t duration = info >> 8;
-			int32_t newDuration = std::max(0, (duration - (EVENT_IMBUEMENTINTERVAL * EVENT_IMBUEMENT_BUCKETS) / 690));
-			if (newDuration > 0) {
-				hasImbue = true;
-			}
-
-			Imbuement* imbuement = g_imbuements.getImbuement(id);
-			if(!imbuement) {
-				continue;
-			}
-
-			Category* category = g_imbuements.getCategoryByID(imbuement->getCategory());
-			if (category->agressive && !player->hasCondition(CONDITION_INFIGHT)) {
-				continue;
-			}
-
-			if (duration > 0 && newDuration == 0) {
-				item->setImbuement(slot, 0);
-				player->onDeEquipImbueItem(imbuement);
-			} else {
-				item->setImbuement(slot, ((newDuration << 8) | id));
-			}
-		}
-
-		if (hasImbue) {
-			it++;
-		} else {
-			ReleaseItem(item);
-			it = imbuedItems[bucket].erase(it);			
-		}
-
-	}
-
-	lastImbuedBucket = bucket;
-	cleanup();
-}
-
 void Game::checkLight()
 {
 	g_scheduler.addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL, std::bind(&Game::checkLight, this)));
@@ -6782,11 +6599,6 @@ void Game::cleanup()
 		item->decrementReferenceCounter();
 	}
 	ToReleaseItems.clear();
-
-	for (Item* item : toImbuedItems) {
-		imbuedItems[lastImbuedBucket].push_back(item);
-	}
-	toImbuedItems.clear();
 }
 
 void Game::ReleaseCreature(Creature* creature)
@@ -7350,42 +7162,6 @@ void Game::playerReportBug(uint32_t playerId, const std::string& message, const 
 	g_events->eventPlayerOnReportBug(player, message, position, category);
 }
 
-void Game::playerCharmData(uint32_t playerId)
-{
-	Player* player = getPlayerByID(playerId);
-	if (!player) {
-		return;
-	}
-
-	player->sendCharmData();
-}
-
-void Game::playerBestiaryGroups(uint32_t playerId)
-{
-	Player* player = getPlayerByID(playerId);
-	if (!player) {
-		return;
-	}
-
-	player->sendBestiaryGroups();
-}
-
-void Game::playerBestiaryMonsterData(uint32_t playerId, uint16_t monsterId)
-{
-	Player* player = getPlayerByID(playerId);
-	if (!player) {
-		return;
-	}
-
-	MonsterType* monsterType = g_monsters.getMonsterTypeByRace(monsterId);
-	if (!monsterType) {
-		std::cout << "[Game::playerBestiaryMonsterData] Monster by id " << monsterId << " not found" << std::endl;
-		return;
-	}
-
-	player->sendBestiaryMonsterData(monsterId);
-}
-
 void Game::playerDebugAssert(uint32_t playerId, const std::string& assertLine, const std::string& date, const std::string& description, const std::string& comment)
 {
 	Player* player = getPlayerByID(playerId);
@@ -7936,17 +7712,6 @@ void Game::playerAcceptMarketOffer(uint32_t playerId, uint32_t timestamp, uint16
 
 }
 
-void Game::parsePlayerBestiaryTracker(uint32_t playerId, uint16_t raceId)
-{
-	Player* player = getPlayerByID(playerId);
-	if (!player) {
-		return;
-	}
-
-	player->manageMonsterTracker(raceId);
-
-}
-
 void Game::playerSendSaleItemList(uint32_t playerId)
 {
 	Player* player = getPlayerByID(playerId);
@@ -8037,55 +7802,6 @@ void Game::playerPreyAction(uint32_t playerId, uint8_t preySlotId, PreyAction_t 
 	if (returnValue != RETURNVALUE_NOERROR) {
 		player->sendMessageDialog(MESSAGEDIALOG_PREY_ERROR, getReturnMessage(returnValue));
 	}
-}
-
-void Game::playerUnlockCharm(uint32_t playerId, uint8_t charmid, uint8_t action, uint16_t raceid)
-{
-	Player* player = getPlayerByID(playerId);
-	if (!player) {
-		return;
-	}
-
-	if (player->isUnlockedCharm(charmid) && action == 0) {
-		return;
-	}
-
-	Charm* charm = g_charms.getCharm(charmid);
-	if(!charm) {
-		return;
-	}
-
-	if (action == 0) {
-		uint16_t price = charm->getPrice();
-		uint16_t playercharm = player->getCharmPoints();
-	
-		if (playercharm < price) {
-			return;
-		}
-	
-		player->setCharmPoints(playercharm - price);
-		player->addCharm(charmid);
-	} else if (action == 1) {
-		if (player->getMonsterCharm(raceid) != -1) {
-			return;
-		}
-
-		player->addCharm(charmid, raceid);
-	} else if (action == 2) {
-		if (player->getMoney() + player->getBankBalance() < (player->getCharmPrice())) {
-			return;
-		}
-
-		removeMoney(player, (player->getCharmPrice()), 0, true);
-		player->removeCharm(charmid);
-	}
-
-	if (player->getLastBestiaryMonster() > 0) {
-		player->sendBestiaryMonsterData(player->getLastBestiaryMonster());
-		player->setLastBestiaryMonster(0);
-	}
-
-	player->sendCharmData();
 }
 
 std::forward_list<Item*> Game::getMarketItemList(uint16_t wareId, uint16_t sufficientCount, DepotLocker* depotLocker)
@@ -8359,7 +8075,6 @@ bool Game::reload(ReloadTypes_t reloadType)
 {
 	switch (reloadType) {
 		case RELOAD_TYPE_ACTIONS: return g_actions->reload();
-		case RELOAD_TYPE_BESTIARY: return g_bestiaries.reload();
 		case RELOAD_TYPE_CHAT: return g_chat->load();
 		case RELOAD_TYPE_CONFIG: return g_config.reload();
 		case RELOAD_TYPE_CREATURESCRIPTS: return g_creatureEvents->reload();
@@ -8370,7 +8085,6 @@ bool Game::reload(ReloadTypes_t reloadType)
 		case RELOAD_TYPE_MODULES: return g_modules->reload();
 		case RELOAD_TYPE_MOUNTS: return mounts.reload();
 		case RELOAD_TYPE_MOVEMENTS: return g_moveEvents->reload();
-		case RELOAD_TYPE_IMBUEMENTS: return g_imbuements.reload();
 		case RELOAD_TYPE_STORE: return g_store.reload();
 		case RELOAD_TYPE_FREE_PASS: return loadFreePass();
 		case RELOAD_TYPE_NPCS: {
@@ -8418,7 +8132,6 @@ bool Game::reload(ReloadTypes_t reloadType)
 
 			g_actions->reload();
 			g_config.reload();
-			g_bestiaries.reload();
 			g_creatureEvents->reload();
 			if (!g_monsters.reload()) {
 				console::reportError("Game::reload", "Failed to reload monsters!");
@@ -8828,29 +8541,3 @@ void Game::saveServeMessage()
 	}	
 }
 
-void Game::playerRequestInventoryImbuements(uint32_t playerId, bool isTrackerOpen) {
-	Player* player = getPlayerByID(playerId);
-	if (!player || player->isRemoved()) {
-		return;
-	}
-
-	player->imbuementTrackerWindowOpen = isTrackerOpen;
-	if (!player->imbuementTrackerWindowOpen) {
-		return;
-	}
-
-	std::map<slots_t, Item*> itemsWithImbueSlotMap;
-	for (uint8_t inventorySlot = CONST_SLOT_FIRST; inventorySlot <= CONST_SLOT_LAST; ++inventorySlot) {
-		auto item = player->getInventoryItem(static_cast<slots_t>(inventorySlot));
-		if (!item) {
-			continue;
-		}
-
-		uint8_t imbuementSlot = item->getImbuingSlots();
-		if (imbuementSlot > 0) {
-			itemsWithImbueSlotMap[static_cast<slots_t>(inventorySlot)] = item;
-		}
-	}
-
-	player->sendInventoryImbuements(itemsWithImbueSlotMap);
-}

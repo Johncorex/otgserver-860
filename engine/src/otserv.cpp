@@ -1,4 +1,4 @@
-/**
+﻿/**
  * The Forgotten Server - a free and open-source MMORPG server emulator
  * Copyright (C) 2019 Mark Samman <mark.samman@gmail.com>
  *
@@ -24,9 +24,7 @@
 #include "game.h"
 
 #include "iomarket.h"
-#include "bestiary.h"
-#include "charm.h"
-#include "imbuements.h"
+
 #include "prey.h"
 #include "store.h"
 
@@ -67,9 +65,6 @@ extern Scripts* g_scripts;
 RSA g_RSA;
 Prey g_prey;
 Store g_store;
-Imbuements g_imbuements;
-Bestiaries g_bestiaries;
-Charms g_charms;
 
 std::mutex g_loaderLock;
 std::condition_variable g_loaderSignal;
@@ -226,7 +221,6 @@ void mainLoader(int argc, char* argv[], ServiceManager* services)
 			config_lua << config_lua_dist.rdbuf();
 			config_lua.close();
 			config_lua_dist.close();
-			console::printResult(CONSOLE_LOADING_OK);
 		} else {
 			console::printResult(CONSOLE_LOADING_ERROR);
 			console::reportFileError("", distFile);
@@ -248,7 +242,6 @@ void mainLoader(int argc, char* argv[], ServiceManager* services)
 		return;
 	}
 
-	console::printResult(CONSOLE_LOADING_OK);
 
 #ifdef _WIN32
 	const std::string& defaultPriority = g_config.getString(ConfigManager::DEFAULT_PRIORITY);
@@ -299,7 +292,6 @@ void mainLoader(int argc, char* argv[], ServiceManager* services)
 	if (g_config.getBoolean(ConfigManager::OPTIMIZE_DATABASE)) {
 		console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Optimizing database tables ...", false);
 		DatabaseManager::optimizeTables();
-		console::printResult(CONSOLE_LOADING_OK);
 	}
 
 	//load vocations
@@ -341,19 +333,11 @@ void mainLoader(int argc, char* argv[], ServiceManager* services)
 		return;
 	}
 
-	console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Loading bestiary ...", false);
-	if (!g_bestiaries.loadFromXml()) {
-		startupErrorMessage("Unable to load Bestiaries!");
-		return;
-	}
-	console::printResult(CONSOLE_LOADING_OK);
-
 	console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Loading lua scripts ...", false);
 	if (!g_scripts->loadScripts("scripts", false, false)) {
 		startupErrorMessage("Failed to load lua scripts");
 		return;
 	}
-	console::printResult(CONSOLE_LOADING_OK);
 
 	// Load lua monsters
 	console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Loading monsters (xml + lua) ... ", false);
@@ -371,9 +355,7 @@ void mainLoader(int argc, char* argv[], ServiceManager* services)
 	// Load quests
 	console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Loading quests ...", false);
 	if (g_config.getBoolean(ConfigManager::QUEST_LUA)) {
-		console::printResult(CONSOLE_LOADING_OK);
 	} else {
-		console::printResult(CONSOLE_LOADING_OK);
 		console::printResultText("Quest system disabled");
 	}
 
@@ -384,29 +366,12 @@ void mainLoader(int argc, char* argv[], ServiceManager* services)
 		return;
 	}
 
-	console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Loading imbuements ...", false);
-	if (!g_imbuements.loadFromXml()) {
-		console::printResult(CONSOLE_LOADING_ERROR);
-		startupErrorMessage("Unable to load imbuements!");
-		return;
-	}
-	console::printResult(CONSOLE_LOADING_OK);
-
-	console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Loading charms ...", false);
-	if (!g_charms.loadFromXml()) {
-		console::printResult(CONSOLE_LOADING_ERROR);
-		startupErrorMessage("Unable to load Charms!");
-		return;
-	}
-	console::printResult(CONSOLE_LOADING_OK);
-
 	console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Loading Store ...", false);
 	if (!g_store.loadFromXml()) {
 		console::printResult(CONSOLE_LOADING_ERROR);
 		startupErrorMessage("Unable to load store!");
 		return;
 	}
-	console::printResult(CONSOLE_LOADING_OK);
 
 	console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Loading prey data ...", false);
 	if (!g_prey.loadFromXml()) {
@@ -414,7 +379,6 @@ void mainLoader(int argc, char* argv[], ServiceManager* services)
 		startupErrorMessage("Unable to load prey data!");
 		return;
 	}
-	console::printResult(CONSOLE_LOADING_OK);
 
 	// Check world type
 	console::print(CONSOLEMESSAGE_TYPE_STARTUP, "Checking world type ...", false);

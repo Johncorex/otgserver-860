@@ -43,7 +43,6 @@ extern MoveEvents* g_moveEvents;
 extern Weapons* g_weapons;
 extern CreatureEvents* g_creatureEvents;
 extern Events* g_events;
-extern Imbuements g_imbuements;
 extern Prey g_prey;
 
 MuteCountMap Player::muteCountMap;
@@ -1382,7 +1381,6 @@ void Player::onChangeZone(ZoneType_t zone)
 
 	g_game.updateCreatureWalkthrough(this);
 	sendIcons();
-	updateImbuementTrackerStats();
 }
 
 void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
@@ -2281,18 +2279,6 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				}
 			}
 
-			uint8_t slots = Item::items[item->getID()].imbuingSlots;
-			for (uint8_t i = 0; i < slots; i++) {
-				uint32_t info = item->getImbuement(i);
-				if (info >> 8) {
-					Imbuement* ib = g_imbuements.getImbuement(info & 0xFF);
-					const int16_t& absorbPercent2 = ib->absorbPercent[combatTypeToIndex(combatType)];
-
-					if (absorbPercent2 != 0) {
-						damage -= std::ceil(damage * (absorbPercent2 / 100.));
-					}
-				}
-			}
 		}
 
 		if (damage <= 0) {
@@ -2360,19 +2346,11 @@ void Player::death(Creature* lastHitCreature)
 
 		sumMana += manaSpent;
 
-		double percentCharm = 1.0;
-		if (lastHitCreature) {
-			Monster* tmpMonster = lastHitCreature->getMonster();
-			if (tmpMonster && tmpMonster->getRaceId() > 0 && getCurrentCreature(12) == tmpMonster->getRaceId()) {
-				percentCharm = 0.7;
-			}
-		}
-
 		if (g_game.getWorldType() == WORLD_TYPE_RETRO_OPEN_PVP && getSkull() == SKULL_WHITE) {
 			setSkull(SKULL_NONE);
 		}
 
-		double deathLossPercent = getLostPercent() * (unfairFightReduction / 100.) * percentCharm;
+		double deathLossPercent = getLostPercent() * (unfairFightReduction / 100.);
 
 		lostMana = static_cast<uint64_t>(sumMana * deathLossPercent);
 
@@ -2561,7 +2539,6 @@ void Player::addInFightTicks(bool pzlock /*= false*/)
 	if (pzlock) {
 		pzLocked = true;
 		sendIcons();
-		updateImbuementTrackerStats();
 	}
 
 	Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_config.getNumber(ConfigManager::PZ_LOCKED), 0);
@@ -3853,7 +3830,6 @@ void Player::onAddCondition(ConditionType_t type)
 	}
 
 	sendIcons();
-	updateImbuementTrackerStats();
 }
 
 void Player::onAddCombatCondition(ConditionType_t type)
@@ -3916,7 +3892,6 @@ void Player::onEndCondition(ConditionType_t type)
 	}
 
 	sendIcons();
-	updateImbuementTrackerStats();
 }
 
 void Player::onCombatRemoveCondition(Condition* condition)
@@ -3979,7 +3954,6 @@ void Player::onAttackedCreature(Creature* target, bool addFightTicks /* = true *
 			setPvpSituation(true);
 			targetPlayer->setPvpSituation(true);
 			sendIcons();
-			updateImbuementTrackerStats();
 		}
 
 		targetPlayer->addInFightTicks();
@@ -3991,7 +3965,6 @@ void Player::onAttackedCreature(Creature* target, bool addFightTicks /* = true *
 			if (!pzLocked) {
 				pzLocked = true;
 				sendIcons();
-				updateImbuementTrackerStats();
 			}
 
 			if (!Combat::isInPvpZone(this, targetPlayer) && !isInWar(targetPlayer)) {
@@ -5378,87 +5351,6 @@ bool Player::isMarketExhausted() const {
 	return (OTSYS_TIME() - lastMarketInteraction < exhaust_time);
 }
 
-void Player::onEquipImbueItem(Imbuement* imbuement)
-{
-	// check skills
-	bool requestUpdate = false;
-
-	for (int32_t i = SKILL_FIST; i <= SKILL_LAST; ++i) {
-		if (imbuement->skills[i]) {
-			requestUpdate = true;
-			setVarSkill(static_cast<skills_t>(i), imbuement->skills[i]);
-		}
-	}
-
-	// check magpoint
-	for (int32_t s = STAT_FIRST; s <= STAT_LAST; ++s) {
-		if (imbuement->stats[s]) {
-			requestUpdate = true;
-			setVarStats(static_cast<stats_t>(s), imbuement->stats[s]);
-		}
-	}
-
-	// speed
-	if (imbuement->speed != 0) {
-		g_game.changeSpeed(this, imbuement->speed);
-	}
-
-	// capacity
-	if (imbuement->capacity != 0) {
-		double capImbue = static_cast<double>(imbuement->capacity)/100;
-		varCap = capacity * capImbue;
-		requestUpdate = true;
-	}
-
-	if (requestUpdate) {
-		requestUpdate = false;
-		sendStats();
-		sendSkills();
-	}
-
-	return;
-}
-
-void Player::onDeEquipImbueItem(Imbuement* imbuement)
-{
-	// check skills
-	bool requestUpdate = false;
-
-	for (int32_t i = SKILL_FIST; i <= SKILL_LAST; ++i) {
-		if (imbuement->skills[i]) {
-			requestUpdate = true;
-			setVarSkill(static_cast<skills_t>(i), -imbuement->skills[i]);
-		}
-	}
-
-	// check magpoint
-	for (int32_t s = STAT_FIRST; s <= STAT_LAST; ++s) {
-		if (imbuement->stats[s]) {
-			requestUpdate = true;
-			setVarStats(static_cast<stats_t>(s), -imbuement->stats[s]);
-		}
-	}
-
-	// speed
-	if (imbuement->speed != 0) {
-		g_game.changeSpeed(this, -imbuement->speed);
-	}
-
-	// capacity
-	if (imbuement->capacity != 0) {
-		varCap = 0;
-		requestUpdate = true;
-	}
-
-	if (requestUpdate) {
-		requestUpdate = false;
-		sendStats();
-		sendSkills();
-	}
-
-	return;
-}
-
 StreakBonus_t Player::getStreakDaysBonus()const {
 	int32_t value;
 	StreakBonus_t bonus;
@@ -5508,99 +5400,6 @@ bool Player::doCritical(uint64_t crit)
 	return false;
 }
 
-void Player::addBestiaryKill(uint16_t racedid, int32_t value, bool gained)
-{
-	if (value != -1) {
-		auto it = bestiaryKills.find(racedid);
-		if (it == bestiaryKills.end()) {
-			BestiaryPoints bestiaryPoints;
-			bestiaryPoints.kills = value;
-			bestiaryPoints.gained = gained;
-			bestiaryKills[racedid] = bestiaryPoints;
-		} else {
-			BestiaryPoints& bestiaryPoints = it->second;
-			bestiaryPoints.kills = bestiaryPoints.kills + value;
-			if (gained) {
-				bestiaryPoints.gained = gained;
-			}
-		}
-
-	} else {
-		bestiaryKills.erase(racedid);
-	}
-}
-
-bool Player::getBestiaryKill(uint16_t racedid, int32_t value) const
-{
-	auto it = bestiaryKills.find(racedid);
-	if (it == bestiaryKills.end()) {
-		value = -1;
-		return false;
-	}
-
-	const BestiaryPoints& bestiaryPoints = it->second;
-	value = bestiaryPoints.kills;
-	return true;
-}
-
-int32_t Player::getBestiaryKills(uint16_t racedid)
-{
-	auto it = bestiaryKills.find(racedid);
-	if (it != bestiaryKills.end()) {
-		BestiaryPoints& bestiaryPoints = it->second;
-		return bestiaryPoints.kills;
-	}
-
-	return 0;
-}
-
-bool Player::gainedCharmPoints(uint16_t racedid)
-{
-	auto it = bestiaryKills.find(racedid);
-	if (it != bestiaryKills.end()) {
-		BestiaryPoints& bestiaryPoints = it->second;
-		return bestiaryPoints.gained;
-	}
-
-	return false;
-}
-
-uint16_t Player::getCurrentCreature(uint8_t charmid)
-{
-	for (const auto& it : charmMap) {
-		if (it.first == charmid) {
-			return it.second;
-		}
-	}
-
-	return 0;
-}
-
-void Player::addCharm(uint8_t charmid, uint16_t raceid)
-{
-	charmMap[charmid] = raceid;
-}
-
-void Player::removeCharm(uint8_t charmid, bool remove)
-{
-	if (remove) { // eraser
-		charmMap.erase(charmid);
-	} else {
-		charmMap[charmid] = 0;
-	}
-}
-
-int8_t Player::getMonsterCharm(uint16_t racedid)
-{
-	for (const auto& it : charmMap) {
-		if (it.second == racedid) {
-			return it.first;
-		}
-	}
-
-	return -1;
-}
-
 void Player::setEffectLowBlow(bool newvalue)
 {
 	if (newvalue == effectLowBlow) {
@@ -5615,38 +5414,6 @@ void Player::setEffectLowBlow(bool newvalue)
 
 	sendSkills();
 	effectLowBlow = newvalue;
-}
-
-void Player::manageMonsterTracker(uint16_t raceid)
-{
-	int count = 0;
-	for (const auto& race : bestiaryTracker) {
-		if (race == raceid) {
-			bestiaryTracker.erase(bestiaryTracker.begin() + count);
-			sendBestiaryTracker();
-			return;
-		}
-		count++;
-	}
-
-	if (bestiaryTracker.size() >= 250) {
-		return;
-	}
-
-	bestiaryTracker.emplace_back(raceid);
-
-	sendBestiaryTracker();
-}
-
-bool Player::monsterInTracker(uint16_t raceid)
-{
-	for (const auto& race : bestiaryTracker) {
-		if (race == raceid) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 void Player::generatePreyData()
@@ -6171,12 +5938,6 @@ void Player::sendPvpSquare(Creature* target, SquareColor_t squareColor)
 
 	if (squareColor == SQ_COLOR_YELLOW) {
 		sendCreatureSquare(this, squareColor, 2); // Only add to self if it's yellow.
-	}
-}
-
-void Player::updateImbuementTrackerStats() const {
-	if (imbuementTrackerWindowOpen) {
-		g_game.playerRequestInventoryImbuements(getID(), true);
 	}
 }
 

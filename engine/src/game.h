@@ -74,8 +74,6 @@ enum LightState_t {
 };
 
 static constexpr int32_t EVENT_LIGHTINTERVAL = 7500;
-static constexpr int32_t EVENT_IMBUEMENTINTERVAL = 250;
-static constexpr int32_t EVENT_IMBUEMENT_BUCKETS = 4;
 
 static constexpr int32_t MOVE_CREATURE_INTERVAL = 1000;
 static constexpr int32_t RANGE_MOVE_CREATURE_INTERVAL = 0;
@@ -445,10 +443,6 @@ class Game
 		void playerSetAttackedCreature(uint32_t playerId, uint32_t creatureId);
 		void playerNPCSay(uint32_t playerId, uint32_t creatureId);
 
-		void playerCharmData(uint32_t playerId);
-		void playerBestiaryGroups(uint32_t playerId);
-		void playerBestiaryMonsterData(uint32_t playerId, uint16_t monsterId);
-
 		void playerFollowCreature(uint32_t playerId, uint32_t creatureId);
 		void playerCancelAttackAndFollow(uint32_t playerId);
 		void playerSetFightModes(uint32_t playerId, fightMode_t fightMode, bool chaseMode, bool secureMode);
@@ -462,10 +456,6 @@ class Game
 		void playerRequestAddVip(uint32_t playerId, const std::string& name);
 		void playerRequestRemoveVip(uint32_t playerId, uint32_t guid);
 		void playerRequestEditVip(uint32_t playerId, uint32_t guid, const std::string& description, uint32_t icon, bool notify);
-		void playerApplyImbuement(uint32_t playerId, uint32_t imbuementid, uint8_t slot, bool protectionCharm);
-		void playerRequestInventoryImbuements(uint32_t playerId, bool isTrackerOpen);
-		void playerClearingImbuement(uint32_t playerid, uint8_t slot);
-		void playerCloseImbuingWindow(uint32_t playerid);
 		void playerTurn(uint32_t playerId, Direction dir);
 		void playerRequestOutfit(uint32_t playerId);
 		void playerShowQuestLog(uint32_t playerId);
@@ -495,11 +485,7 @@ class Game
 
 		void playerTransferCoins(uint32_t playerId, const std::string& recipient, uint16_t amount);
 
-		void parsePlayerBestiaryTracker(uint32_t playerId, uint16_t raceId);
-
 		void parsePlayerExtendedOpcode(uint32_t playerId, uint8_t opcode, const std::string& buffer);
-
-		void playerUnlockCharm(uint32_t playerId, uint8_t charmid, uint8_t action, uint16_t raceid);
 
 		std::forward_list<Item*> getMarketItemList(uint16_t wareId, uint16_t sufficientCount, DepotLocker* depotLocker);
 
@@ -556,11 +542,6 @@ class Game
 		static void addMagicEffect(const SpectatorHashSet& spectators, const Position& pos, uint16_t effect);
 		void addDistanceEffect(const Position& fromPos, const Position& toPos, uint8_t effect);
 		static void addDistanceEffect(const SpectatorHashSet& spectators, const Position& fromPos, const Position& toPos, uint8_t effect);
-
-		void startImbuementCountdown(Item* item) {
-			item->incrementReferenceCounter();
-			toImbuedItems.push_front(item);
-		}
 
 		void startDecay(Item* item);
 		void stopDecay(Item* item);
@@ -672,9 +653,7 @@ class Game
 		Quests quests;
 
 		std::forward_list<Item*> toDecayItems;
-		std::forward_list<Item*> toImbuedItems;
 	protected:
-		void checkImbuements();
 		void playerWhisper(Player* player, const std::string& text);
 		bool playerYell(Player* player, const std::string& text);
 		bool playerSpeakTo(Player* player, SpeakClasses type, const std::string& receiver, const std::string& text);
@@ -699,7 +678,6 @@ class Game
 		std::map<uint32_t, uint32_t> stagesMl;
 		std::map<uint16_t, uint32_t> itemsPriceMap;
 
-		std::list<Item*> imbuedItems[EVENT_IMBUEMENT_BUCKETS];
 		std::list<Creature*> checkCreatureLists[EVENT_CREATURECOUNT];
 
 		std::vector<Creature*> ToReleaseCreatures;
@@ -708,7 +686,6 @@ class Game
 		std::unordered_map<uint32_t, PlayerSell> playerSell;
 
 		size_t lastBucket = 0;
-		size_t lastImbuedBucket = 0;
 
 		WildcardTreeNode wildcardTree { false };
 

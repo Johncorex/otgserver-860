@@ -1,4 +1,4 @@
-/**
+﻿/**
  * The Forgotten Server - a free and open-source MMORPG server emulator
  * Copyright (C) 2019 Mark Samman <mark.samman@gmail.com>
  *
@@ -21,7 +21,6 @@
 
 #include "monsters.h"
 #include "monster.h"
-#include "bestiary.h"
 #include "spells.h"
 #include "combat.h"
 #include "weapons.h"
@@ -34,7 +33,6 @@ extern Game g_game;
 extern Spells* g_spells;
 extern Monsters g_monsters;
 extern ConfigManager g_config;
-extern Bestiaries g_bestiaries;
 
 spellBlock_t::~spellBlock_t()
 {
@@ -69,25 +67,16 @@ bool Monsters::loadFromXml(bool reloading /*= false*/)
 	}
 
 	loaded = true;
-	std::map<std::string, uint16_t> bestiaryMonsters = g_bestiaries.getMonsterNameMap();
 	for (auto monsterNode : doc.child("monsters").children()) {
 		std::string name = asLowerCaseString(monsterNode.attribute("name").as_string());
-		uint16_t race = 0;
-		auto it = bestiaryMonsters.find(name);
-		if (it != bestiaryMonsters.end()) {
-			race = it->second;
-		}
-		if (race != 0) {
-			raceidMonsters[race] = name;
-		}
 		std::string file = "data/monster/" + std::string(monsterNode.attribute("file").as_string());
 		auto forceLoad = g_config.getBoolean(ConfigManager::FORCE_MONSTERTYPE_LOAD);
 		if (forceLoad) {
-			loadMonster(file, name, true, race);
+			loadMonster(file, name, true, 0);
 			continue;
 		}
 		if (reloading && monsters.find(name) != monsters.end()) {
-			loadMonster(file, name, true, race);
+			loadMonster(file, name, true, 0);
 		} else {
 			unloadedMonsters.emplace(name, file);
 		}

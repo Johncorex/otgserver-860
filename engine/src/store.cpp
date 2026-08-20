@@ -44,8 +44,6 @@ const std::unordered_map<std::string, OfferTypes_t> OfferTypesMap = {
 	{"allblessing", OFFER_TYPE_ALLBLESSINGS},
 	{"reward", OFFER_TYPE_INSTANT_REWARD_ACCESS},
 	{"training", OFFER_TYPE_TRAINING},
-	{"charmexpansion", OFFER_TYPE_CHARM_EXPANSION},
-	{"charmpoints", OFFER_TYPE_CHARM_POINTS},
 	{"multiitems", OFFER_TYPE_MULTI_ITEMS},
 	{"blessrune", OFFER_TYPE_BLESS_RUNE},
 	{"vip", OFFER_TYPE_VIP},
@@ -564,10 +562,6 @@ std::string StoreOffer::getDisabledReason(Player* player)
 			disabledReason = "Can be purchased up to 5 times between 2 server saves.";
 		} else if ((OS_TIME(nullptr) - value2) < (1*60*60)) {
 			disabledReason = "You still have active boost.";
-		}
-	} else if (type == OFFER_TYPE_CHARM_EXPANSION) {
-		if (player->hasCharmExpansion()) {
-			disabledReason = "You have charm expansion";
 		}
 	} else if (type == OFFER_TYPE_BLESS_RUNE) {
 		int32_t value1;

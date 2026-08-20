@@ -137,8 +137,6 @@ enum Attr_ReadValue {
 	ATTR_READ_END,
 };
 
-#define IMBUEMENT_SLOT 500
-
 class ItemAttributes
 {
 	public:
@@ -1256,9 +1254,6 @@ class Item : virtual public Thing
 		bool isRemoved() const override {
 			return !parent || parent->isRemoved();
 		}
-
-		uint32_t getImbuement(uint8_t slot);
-		void setImbuement(uint8_t slot, int64_t info);
 
 	protected:
 		std::string getWeightDescription(uint32_t weight) const;

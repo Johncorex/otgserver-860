@@ -28,7 +28,6 @@
 #include "game.h"
 #include "bed.h"
 #include "rewardchest.h"
-#include "imbuements.h"
 
 #include "actions.h"
 #include "spells.h"
@@ -36,7 +35,6 @@
 extern Game g_game;
 extern Spells* g_spells;
 extern Vocations g_vocations;
-extern Imbuements g_imbuements;
 
 Items Item::items;
 
@@ -92,27 +90,6 @@ Item* Item::CreateItem(const uint16_t type, uint16_t count /*= 0*/)
 	}
 
 	return newItem;
-}
-
-uint32_t Item::getImbuement(uint8_t slot) {
-	int64_t slotid = IMBUEMENT_SLOT + slot;
-	const ItemAttributes::CustomAttribute* attr = getCustomAttribute(slotid);
-	if (attr) {
-		uint32_t info = static_cast<uint32_t>(boost::get<int64_t>(attr->value));
-		if(info << 8)
-			return info;
-	}
-
-	return 0;
-}
-
-void Item::setImbuement(uint8_t slot, int64_t info) {
-	int64_t slotid = IMBUEMENT_SLOT + slot;
-	std::string key = boost::lexical_cast<std::string>(slotid);
-	ItemAttributes::CustomAttribute val;
-	val.set<int64_t>(info);
-	setCustomAttribute(key, val);
-	return;
 }
 
 Container* Item::CreateItemAsContainer(const uint16_t type, uint16_t size)
@@ -2156,41 +2133,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		s << '.';
 	}
 
-	if (it.imbuingSlots > 0) {
-		s << std::endl << marcador << "Imbuements: (";
-		if (item) {
-			Item* thisItem = const_cast<Item*>(item);
-			Imbuement* imbuement = nullptr;
-			BaseImbue* base = nullptr;
-			for (uint8_t slot = 0; slot < it.imbuingSlots; slot++) {
-				if (slot > 0) {
-					s << ", ";
-				}
-				uint32_t info = thisItem->getImbuement(slot);
-				if (info >> 8 != 0) {
-					imbuement = g_imbuements.getImbuement(info & 0xFF);
-					base = g_imbuements.getBaseByID(imbuement->getBaseID());
-					s << base->name << " " << imbuement->getName() << " ";
-
-					uint32_t hours = (info >> 8) / 3600;
-					uint32_t minutes = ((info >> 8) / 60) % 60;
-
-					s << hours << ":" << &"0"[minutes > 9] << minutes << "h";
-				} else {
-					s << "Empty Slot";
-				}
-			}
-		} else {
-			for (uint8_t slot = 0; slot < it.imbuingSlots; slot++) {
-				if (slot > 0) {
-					s << ", ";
-				}
-				s << "Empty Slot";
-			}
-		}
-		s << ").";
-	}
-
 	if (lookDistance <= 1) {
 		if (item) {
 			const uint32_t weight = item->getWeight();
@@ -2487,22 +2429,6 @@ bool Item::hasMarketAttributes() const
 {
 	if (attributes == nullptr) {
 		return true;
-	}
-
-	if (items[id].imbuingSlots > 0) {
-		Item* item = const_cast<Item*>(this);
-		for (uint8_t slot = 0; slot < items[id].imbuingSlots; slot++) {
-			uint32_t info = item->getImbuement(slot);
-			if (info >> 8 != 0) {
-				return false;
-			}
-		}
-
-		// // desativado para parar o choro
-		// if (item->hasAttribute(ITEM_ATTRIBUTE_IMBUED)) {
-		// 	return false;
-		// }
-
 	}
 
 	for (const auto& attr : attributes->getList()) {

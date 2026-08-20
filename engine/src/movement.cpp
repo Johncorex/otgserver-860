@@ -26,12 +26,10 @@
 #include "pugicast.h"
 
 #include "movement.h"
-#include "imbuements.h"
 
 extern Game g_game;
 extern Vocations g_vocations;
 extern Events* g_events;
-extern Imbuements g_imbuements;
 
 MoveEvents::MoveEvents() :
 	scriptInterface("MoveEvents Interface")
@@ -711,25 +709,6 @@ ReturnValue MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* ite
 		player->setItemAbility(slot, true);
 	}
 
-	if (it.imbuingSlots > 0) {
-		std::vector<Imbuement*> imbuement;
-		for(uint8_t slotid = 0; slotid < it.imbuingSlots; slotid++) {
-			uint32_t info = item->getImbuement(slotid);
-			if (info >> 8 == 0) {
-				continue;
-			}
-			imbuement.push_back(g_imbuements.getImbuement(info & 0xFF));
-		}
-
-		if(!imbuement.empty()) {
-			g_game.startImbuementCountdown(item);
-			for (Imbuement* ib : imbuement) {
-				player->onEquipImbueItem(ib);
-			}
-		}
-		player->updateImbuementTrackerStats();
-	}
-
 	if (!it.abilities) {
 		return RETURNVALUE_NOERROR;
 	}
@@ -825,23 +804,6 @@ ReturnValue MoveEvent::DeEquipItem(MoveEvent*, Player* player, Item* item, slots
 	if (it.transformDeEquipTo != 0) {
 		g_game.transformItem(item, it.transformDeEquipTo);
 		g_game.startDecay(item);
-	}
-
-	if (it.imbuingSlots > 0) {
-		std::vector<Imbuement*> imbuement;
-		for(uint8_t slotid = 0; slotid < it.imbuingSlots; slotid++) {
-			uint32_t info = item->getImbuement(slotid);
-			if (info >> 8 == 0) {
-				continue;
-			}
-			imbuement.push_back(g_imbuements.getImbuement(info & 0xFF));
-		}
-		if(!imbuement.empty()) {
-			for (Imbuement* ib : imbuement) {
-				player->onDeEquipImbueItem(ib);
-			}
-		}
-		player->updateImbuementTrackerStats();
 	}
 
 	if (!it.abilities) {

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * The Forgotten Server - a free and open-source MMORPG server emulator
  * Copyright (C) 2019 Mark Samman <mark.samman@gmail.com>
  *
@@ -47,12 +47,7 @@ enum ResourceType_t : uint8_t {
 };
 
 enum MessageDialog_t : uint8_t {
-	MESSAGEDIALOG_IMBUEMENT_SUCCESS = 0,
-	MESSAGEDIALOG_IMBUEMENT_ERROR = 1,
-	MESSAGEDIALOG_IMBUEMENT_ROLL_FAILED = 2,
 	MESSAGEDIALOG_IMBUING_STATION_NOT_FOUND = 3,
-	MESSAGEDIALOG_CLEARING_CHARM_SUCCESS = 10,
-	MESSAGEDIALOG_CLEARING_CHARM_ERROR = 11,
 	MESSAGEDIALOG_PREY_MESSAGE = 20,
 	MESSAGEDIALOG_PREY_ERROR = 21,
 };
@@ -858,11 +853,6 @@ enum MonstersEvent_t : uint8_t {
 	MONSTERS_EVENT_SAY = 5,
 };
 
-struct BestiaryPoints
-{
-	int32_t kills = 0;
-	bool gained = false;
-};
 
 struct StoreHistory {
 	StoreHistory(uint32_t time, uint8_t mode, uint32_t amount, uint8_t coinMode, std::string description, int32_t cust) : 

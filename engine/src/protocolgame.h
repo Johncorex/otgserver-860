@@ -217,12 +217,6 @@ class ProtocolGame final : public ProtocolGameBase
 
 		void parseToggleMount(NetworkMessage& msg);
 
-		// Imbuements
-		void parseInventoryImbuements(NetworkMessage& msg);
-		void parseApplyImbuemente(NetworkMessage& msg);
-		void parseClearingImbuement(NetworkMessage& msg);
-		void parseCloseImbuingWindow(NetworkMessage& msg);
-
 		void parseModalWindowAnswer(NetworkMessage& msg);
 
 		// Store
@@ -264,14 +258,6 @@ class ProtocolGame final : public ProtocolGameBase
 		void parseRemoveVip(NetworkMessage& msg);
 		void parseEditVip(NetworkMessage& msg);
 
-		void parseRequestBestiaryData();
-		void parseRequestBestiaryOverview(NetworkMessage& msg);
-		void parseRequestBestiaryMonsterData(NetworkMessage& msg);
-
-		// charm
-		void parseRequestCharmData();
-		void parseRequestUnlockCharm(NetworkMessage& msg);
-
 		void parseNPCSay(NetworkMessage& msg);
 
 		void parseRotateItem(NetworkMessage& msg);
@@ -284,26 +270,11 @@ class ProtocolGame final : public ProtocolGameBase
 		void parseOpenPrivateChannel(NetworkMessage& msg);
 		void parseCloseChannel(NetworkMessage& msg);
 
-		// imbue info
-		void addImbuementInfo(NetworkMessage &msg, uint32_t imbuid);
-
 		//Send functions
 		void sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent);
 		void sendRestingAreaIcon(bool activate=false, bool activeResting=false);
 
-		void sendImbuementWindow(Item* item);
-		void sendInventoryImbuements(const std::map<slots_t, Item*> items);
-
-		void sendBestiaryGroups();
-		void sendBestiaryOverview(std::string raceName);
-		void sendBestiaryOverview(std::vector<uint16_t> monsters);
-		void sendBestiaryMonsterData(uint16_t id);
-
-		// charm
-		void sendCharmData();
-
 		void sendPlayerMana(const Player* target);
-		void sendBestiaryTracker();
 
 		// Unjust Panel
 		void sendUnjustifiedPoints(const uint8_t& dayProgress, const uint8_t& dayLeft, const uint8_t& weekProgress, const uint8_t& weekLeft, const uint8_t& monthProgress, const uint8_t& monthLeft, const uint8_t& skullDuration);
@@ -368,8 +339,6 @@ class ProtocolGame final : public ProtocolGameBase
 		
 		//OTCv8
 		void sendFeatures();
-
-		void parseBestiaryTracker(NetworkMessage& msg);
 
 		// 8.6 sends (definitions delegate to ProtocolGameBase via wrappers in protocolgame.cpp)
 		void sendTextMessage(const TextMessage& message);

@@ -36,7 +36,6 @@
 #include "monster.h"
 #include "events.h"
 #include "modules.h"
-#include "imbuements.h"
 
 extern Dispatcher g_dispatcher;
 extern Stats g_stats;

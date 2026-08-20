@@ -20,7 +20,6 @@
 #ifndef FS_EVENTS_H_BD444CC0EE167E5777E4C90C766B36DC
 #define FS_EVENTS_H_BD444CC0EE167E5777E4C90C766B36DC
 
-#include "imbuements.h"
 #include "luascript.h"
 #include "spells.h"
 #include "const.h"
@@ -28,7 +27,6 @@
 class Party;
 class ItemType;
 class Tile;
-class Imbuements;
 
 class Events
 {
@@ -68,9 +66,6 @@ class Events
 		int32_t playerOnRequestQuestLine = -1;
 		int32_t playerOnStorageUpdate = -1;		
 		int32_t playerOnRemoveCount = -1;
-		int32_t playerCanBeAppliedImbuement = -1;
-		int32_t playerOnApplyImbuement = -1;
-		int32_t playerClearImbuement = -1;
 		int32_t playerOnCombat = -1;
 		int32_t onWrapItem = -1;
 
@@ -119,9 +114,6 @@ class Events
 		void eventPlayerOnRequestQuestLog(Player* player);
 		void eventPlayerOnRequestQuestLine(Player* player, uint16_t questId);
 		void eventOnStorageUpdate(Player* player, const uint32_t key, const int32_t value, int32_t oldValue, uint64_t currentTime);
-		bool eventPlayerCanBeAppliedImbuement(Player* player, Imbuement* imbuement, Item* item);
-		void eventPlayerOnApplyImbuement(Player* player, Imbuement* imbuement, Item* item, uint8_t slot, bool protectionCharm);
-		void eventPlayerClearImbuement(Player* player, Item* item, uint8_t slot);
 		void eventPlayerOnCombat(Player* player, Creature* target, Item* item, CombatDamage& damage);
 		bool eventPlayerOnWrapItem(Player* player, Item* item);
 
