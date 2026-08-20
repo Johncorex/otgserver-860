@@ -1,0 +1,144 @@
+/**
+ * The Forgotten Server - a free and open-source MMORPG server emulator
+ * Copyright (C) 2020  Mark Samman <mark.samman@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+#include "otpch.h"
+
+#include "decay.h"
+#include "game.h"
+#include "scheduler.h"
+
+extern Game g_game;
+Decay g_decay;
+
+// Maximum number of items processed per checkDecay() tick. This caps the amount
+// of synchronous work (and therefore the CPU spike) when a large burst of items
+// expires at once, spreading the load across several scheduler ticks instead of
+// stalling a single tick.
+static constexpr size_t MAX_DECAY_PER_TICK = 1000;
+
+void Decay::startDecay(Item* item, int32_t duration)
+{
+	if (item->hasAttribute(ITEM_ATTRIBUTE_DURATION_TIMESTAMP)) {
+		stopDecay(item, item->getIntAttr(ITEM_ATTRIBUTE_DURATION_TIMESTAMP));
+	}
+
+	int64_t timestamp = OTSYS_TIME() + static_cast<int64_t>(duration);
+	if (decayMap.empty()) {
+		eventId = g_scheduler.addEvent(createSchedulerTask(std::max<int32_t>(SCHEDULER_MINTICKS, duration), std::bind(&Decay::checkDecay, this)));
+	} else {
+		if (timestamp < decayMap.begin()->first) {
+			g_scheduler.stopEvent(eventId);
+			eventId = g_scheduler.addEvent(createSchedulerTask(std::max<int32_t>(SCHEDULER_MINTICKS, duration), std::bind(&Decay::checkDecay, this)));
+		}
+	}
+
+	item->incrementReferenceCounter();
+	item->setDecaying(DECAYING_TRUE);
+	item->setDurationTimestamp(timestamp);
+	decayMap[timestamp].push_back(item);
+}
+
+void Decay::stopDecay(Item* item, int64_t timestamp)
+{
+	auto it = decayMap.find(timestamp);
+	if (it != decayMap.end()) {
+		std::vector<Item*>& decayItems = it->second;
+
+		size_t i = 0, end = decayItems.size();
+		if (end == 1) {
+			if (item == decayItems[i]) {
+				if (item->hasAttribute(ITEM_ATTRIBUTE_DURATION)) {
+					//Incase we removed duration attribute don't assign new duration
+					item->setDuration(item->getDuration());
+				}
+				item->removeAttribute(ITEM_ATTRIBUTE_DECAYSTATE);
+				g_game.ReleaseItem(item);
+
+				decayMap.erase(it);
+			}
+			return;
+		}
+		while (i < end) {
+			if (item == decayItems[i]) {
+				if (item->hasAttribute(ITEM_ATTRIBUTE_DURATION)) {
+					//Incase we removed duration attribute don't assign new duration
+					item->setDuration(item->getDuration());
+				}
+				item->removeAttribute(ITEM_ATTRIBUTE_DECAYSTATE);
+				g_game.ReleaseItem(item);
+
+				std::swap(decayItems[i], decayItems.back());
+				decayItems.pop_back();
+				return;
+			}
+			++i;
+		}
+	}
+}
+
+void Decay::checkDecay()
+{
+	int64_t timestamp = OTSYS_TIME();
+
+	std::vector<Item*> tempItems;
+	tempItems.reserve(MAX_DECAY_PER_TICK);
+
+	auto it = decayMap.begin(), end = decayMap.end();
+	size_t processed = 0;
+	while (it != end) {
+		if (it->first > timestamp) {
+			break;
+		}
+
+		if (processed >= MAX_DECAY_PER_TICK) {
+			// Too much work for a single tick, leave the rest for the next one.
+			break;
+		}
+
+		// Iterating here is unsafe so let's copy our items into temporary vector
+		std::vector<Item*>& decayItems = it->second;
+		processed += decayItems.size();
+		tempItems.insert(tempItems.end(), decayItems.begin(), decayItems.end());
+		it = decayMap.erase(it);
+	}
+
+	for (Item* item : tempItems) {
+		if (!item->canDecay()) {
+			item->setDuration(item->getDuration());
+			item->setDecaying(DECAYING_FALSE);
+		} else {
+			const ItemType& itemType = Item::items[item->getID()];
+			if (itemType.corpseType != RACE_NONE && itemType.decayTime > 0) {
+				int32_t correctDuration = itemType.decayTime * 1000;
+				if (item->getIntAttr(ITEM_ATTRIBUTE_DURATION) != correctDuration) {
+					item->setDuration(correctDuration);
+				}
+			}
+			
+			item->setDecaying(DECAYING_FALSE);
+			g_game.internalDecayItem(item);
+		}
+
+		g_game.ReleaseItem(item);
+	}
+
+	if (it != end) {
+		eventId = g_scheduler.addEvent(createSchedulerTask(std::max<int32_t>(SCHEDULER_MINTICKS, static_cast<int32_t>(it->first - timestamp)), std::bind(&Decay::checkDecay, this)));
+	}
+}
