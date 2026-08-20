@@ -568,6 +568,8 @@ void ProtocolGame::parsePreyAction(NetworkMessage& msg)
 
 void ProtocolGame::sendResourceData(ResourceType_t resourceType, int64_t amount) 
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xEE);
 	msg.addByte(resourceType);
@@ -590,6 +592,8 @@ void ProtocolGame::parseRequestItemDetail(NetworkMessage& msg)
 
 void ProtocolGame::sendChannelEvent(uint16_t channelId, const std::string& playerName, ChannelEvent_t channelEvent)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xF3);
 	msg.add<uint16_t>(channelId);
@@ -604,6 +608,8 @@ void ProtocolGame::sendChannelEvent(uint16_t channelId, const std::string& playe
 
 void ProtocolGame::sendCreatureType(const Creature* creature, uint8_t creatureType)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0x95);
 	msg.add<uint32_t>(creature->getID());
@@ -628,6 +634,8 @@ void ProtocolGame::sendCreatureType(const Creature* creature, uint8_t creatureTy
 
 void ProtocolGame::sendCreatureHelpers(uint32_t creatureId, uint16_t helpers)
 {
+	return;
+
 	if (version >= 1185) {
 		return;
 	}
@@ -644,6 +652,8 @@ void ProtocolGame::sendCreatureHelpers(uint32_t creatureId, uint16_t helpers)
 
 void ProtocolGame::sendMapManage(uint8_t action)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xDD);
 
@@ -747,6 +757,8 @@ void ProtocolGame::sendMapManage(uint8_t action)
 
 void ProtocolGame::sendUnjustifiedPoints(const uint8_t& dayProgress, const uint8_t& dayLeft, const uint8_t& weekProgress, const uint8_t& weekLeft, const uint8_t& monthProgress, const uint8_t& monthLeft, const uint8_t& skullDuration)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xB7);
 	msg.addByte(dayProgress);
@@ -761,6 +773,8 @@ void ProtocolGame::sendUnjustifiedPoints(const uint8_t& dayProgress, const uint8
 
 
 void ProtocolGame::sendRestingAreaIcon(bool activate/*=false*/, bool activeResting/*=false*/) {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xA9);
 
@@ -790,6 +804,8 @@ void ProtocolGame::sendRestingAreaIcon(bool activate/*=false*/, bool activeResti
 
 void ProtocolGame::sendClientCheck()
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0x63);
 	msg.add<uint32_t>(1);
@@ -799,6 +815,8 @@ void ProtocolGame::sendClientCheck()
 
 void ProtocolGame::sendGameNews()
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0x98);
 	msg.add<uint32_t>(1); // unknown
@@ -808,6 +826,8 @@ void ProtocolGame::sendGameNews()
 
 void ProtocolGame::sendResourceBalance(uint64_t money, uint64_t bank)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xEE);
 	msg.addByte(0x00);
@@ -821,6 +841,8 @@ void ProtocolGame::sendResourceBalance(uint64_t money, uint64_t bank)
 
 void ProtocolGame::sendMarketEnter(uint32_t depotId)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xF6);
 
@@ -884,6 +906,8 @@ void ProtocolGame::sendMarketEnter(uint32_t depotId)
 
 void ProtocolGame::sendMarketLeave()
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xF7);
 	writeToOutputBuffer(msg);
@@ -891,6 +915,8 @@ void ProtocolGame::sendMarketLeave()
 
 void ProtocolGame::sendMarketBrowseItem(uint16_t itemId, const MarketOfferList& buyOffers, const MarketOfferList& sellOffers)
 {
+	return;
+
 	NetworkMessage msg;
 
 	msg.addByte(0xF9);
@@ -920,6 +946,8 @@ void ProtocolGame::sendMarketBrowseItem(uint16_t itemId, const MarketOfferList& 
 
 void ProtocolGame::sendMarketAcceptOffer(const MarketOfferEx& offer)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xF9);
 	msg.addItemId(offer.itemId);
@@ -947,6 +975,8 @@ void ProtocolGame::sendMarketAcceptOffer(const MarketOfferEx& offer)
 
 void ProtocolGame::sendMarketBrowseOwnOffers(const MarketOfferList& buyOffers, const MarketOfferList& sellOffers)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xF9);
 	msg.add<uint16_t>(MARKETREQUEST_OWN_OFFERS);
@@ -974,6 +1004,8 @@ void ProtocolGame::sendMarketBrowseOwnOffers(const MarketOfferList& buyOffers, c
 
 void ProtocolGame::sendMarketCancelOffer(const MarketOfferEx& offer)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xF9);
 	msg.add<uint16_t>(MARKETREQUEST_OWN_OFFERS);
@@ -1001,6 +1033,8 @@ void ProtocolGame::sendMarketCancelOffer(const MarketOfferEx& offer)
 
 void ProtocolGame::sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyOffers, const HistoryMarketOfferList& sellOffers)
 {
+	return;
+
 	uint32_t i = 0;
 	std::map<uint32_t, uint16_t> counterMap;
 	uint32_t buyOffersToSend = std::min<uint32_t>(buyOffers.size(), 810 + std::max<int32_t>(0, 810 - sellOffers.size()));
@@ -1038,6 +1072,8 @@ void ProtocolGame::sendMarketBrowseOwnHistory(const HistoryMarketOfferList& buyO
 
 void ProtocolGame::sendMarketDetail(uint16_t itemId)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xF8);
 	msg.addItemId(itemId);
@@ -1267,6 +1303,8 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
 
 void ProtocolGame::sendItemDetail(uint16_t itemCID)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0x76);
 
@@ -1527,6 +1565,8 @@ void ProtocolGame::sendItemDetail(uint16_t itemCID)
 }
 
 void ProtocolGame::sendCoinBalance() {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xF2); // updating balance
 	msg.addByte(0x01);
@@ -1566,6 +1606,8 @@ void ProtocolGame::updateCoinBalance() {
 
 void ProtocolGame::sendQuestTracker()
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xD0); // byte quest tracker
 	msg.addByte(1); // send quests of quest log ??
@@ -1603,6 +1645,8 @@ void ProtocolGame::sendQuestTracker()
 
 void ProtocolGame::sendSpellCooldown(uint8_t spellId, uint32_t time)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xA4);
 	if (player->getProtocolVersion() < 1120 && spellId >= 170) {
@@ -1615,6 +1659,8 @@ void ProtocolGame::sendSpellCooldown(uint8_t spellId, uint32_t time)
 
 void ProtocolGame::sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xA5);
 	msg.addByte(groupId);
@@ -1624,6 +1670,8 @@ void ProtocolGame::sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time)
 
 void ProtocolGame::sendModalWindow(const ModalWindow& modalWindow)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xFA);
 
@@ -1683,6 +1731,8 @@ void ProtocolGame::addImbuementInfo(NetworkMessage& msg, uint32_t imbuid)
 
 void ProtocolGame::sendImbuementWindow(Item* item)
 {
+	return;
+
 	if (!item || item->isRemoved()) {
 		return;
 	}
@@ -1767,6 +1817,8 @@ void ProtocolGame::parseBestiaryTracker(NetworkMessage& msg)
 // OTCv8
 void ProtocolGame::sendFeatures()
 {
+	return;
+
 	if(!otclientV8) 
 		return;
 
@@ -1789,6 +1841,8 @@ void ProtocolGame::sendFeatures()
 
 void ProtocolGame::sendBestiaryGroups()
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xD5);
 	msg.add<uint16_t>(g_bestiaries.bestiary.size());
@@ -1802,6 +1856,8 @@ void ProtocolGame::sendBestiaryGroups()
 
 void ProtocolGame::sendBestiaryOverview(std::string raceName)
 {
+	return;
+
 	Bestiary* race = g_bestiaries.getBestiaryByName(raceName);
 	if (!race) {
 		std::cout << "nao achei " << raceName << std::endl;
@@ -1839,6 +1895,8 @@ void ProtocolGame::sendBestiaryOverview(std::string raceName)
 
 void ProtocolGame::sendBestiaryOverview(std::vector<uint16_t> monsters)
 {
+	return;
+
 	if(monsters.empty()) {
 		return;
 	}
@@ -1897,6 +1955,8 @@ void ProtocolGame::sendBestiaryOverview(std::vector<uint16_t> monsters)
 
 void ProtocolGame::sendBestiaryMonsterData(uint16_t monsterId)
 {
+	return;
+
 	Bestiary* race = g_bestiaries.getBestiaryByRaceID(monsterId);
 	if (!race) {
 		std::cout << "break race: " << monsterId << std::endl;
@@ -2066,6 +2126,8 @@ void ProtocolGame::sendBestiaryMonsterData(uint16_t monsterId)
 
 void ProtocolGame::sendCharmData()
 {
+	return;
+
 
 	NetworkMessage msg;
 	msg.addByte(0xD8);
@@ -2123,6 +2185,8 @@ void ProtocolGame::sendCharmData()
 
 void ProtocolGame::sendPlayerMana(const Player* target)
 {
+	return;
+
 	if (version < 1230) {
 		return;
 	}
@@ -2137,6 +2201,8 @@ void ProtocolGame::sendPlayerMana(const Player* target)
 
 void ProtocolGame::sendBestiaryTracker()
 {
+	return;
+
 	if (version < 1230) {
 		return;
 	}
@@ -2195,6 +2261,8 @@ void ProtocolGame::requestPurchaseData(uint32_t offerId, uint8_t offerType)
 
 void ProtocolGame::sendStoreHistory(uint32_t totalPages, uint32_t pages, std::vector<StoreHistory> filter)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0xFD);
 	msg.add<uint32_t>(totalPages > 0 ? pages - 1 : 0x0); //-- current page
@@ -2221,6 +2289,8 @@ void ProtocolGame::sendStoreHistory(uint32_t totalPages, uint32_t pages, std::ve
 
 void ProtocolGame::sendLockerItems(std::map<uint16_t, uint16_t> itemMap, uint16_t count)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0x94);
 
@@ -2235,6 +2305,8 @@ void ProtocolGame::sendLockerItems(std::map<uint16_t, uint16_t> itemMap, uint16_
 
 void ProtocolGame::sendInventoryImbuements(const std::map<slots_t, Item*> items)
 {
+	return;
+
 	NetworkMessage msg;
 	msg.addByte(0x5D);
 
