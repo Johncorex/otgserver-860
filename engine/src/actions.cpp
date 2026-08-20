@@ -397,25 +397,8 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			openContainer = myRewardChest;
 		}
 
-		//reward container proxy created when the boss dies
-		if (container->getID() == ITEM_REWARD_CONTAINER && !container->getReward()) {
-			if (Reward* reward = player->getReward(container->getIntAttr(ITEM_ATTRIBUTE_DATE), false)) {
-				reward->setParent(container->getRealParent());
-				openContainer = reward;
-			} else {
-				return RETURNVALUE_THISISIMPOSSIBLE;
-			}
-		}
-
 		uint32_t corpseOwner = container->getCorpseOwner();
-		if (container->isRewardCorpse()) {
-			//only players who participated in the fight can open the corpse
-			if (player->getGroup()->id == 4 || player->getGroup()->id == 5)
-				return RETURNVALUE_YOUCANTOPENCORPSEADM;
-			if (!player->getReward(container->getIntAttr(ITEM_ATTRIBUTE_DATE), false)) {
-				return RETURNVALUE_YOUARENOTTHEOWNER;
-			}
-		} else if (corpseOwner != 0 && !player->canOpenCorpse(corpseOwner)) {
+		if (corpseOwner != 0 && !player->canOpenCorpse(corpseOwner)) {
 			return RETURNVALUE_YOUARENOTTHEOWNER;
 		}
 

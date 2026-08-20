@@ -1,62 +1,20 @@
-local events = {
-	'ParasiteWarzone',
-	'ElementalSpheresOverlords',
-	'BigfootBurdenVersperoth',
-	'BigfootBurdenWiggler',
-	'SvargrondArenaKill',
-	'NewFrontierShardOfCorruption',
-	'NewFrontierTirecz',
-	'ServiceOfYalaharDiseasedTrio',
-	'ServiceOfYalaharAzerus',
-	'ServiceOfYalaharQuaraLeaders',
-	'InquisitionBosses',
-	'InquisitionUngreez',
-	'KillingInTheNameOfKills',
+﻿local events = {
 	'KillingInTheNameOfKillss',
 	'KillingInTheNameOfKillsss',
-	'MastersVoiceServants',
 	'SecretServiceBlackKnight',
 	'ThievesGuildNomad',
-	'WotELizardMagistratus',
-	'WotELizardNoble',
-	'WotEKeeper',
-	'WotEBosses',
-	'WotEZalamon',
-	'WarzoneThree',
 	'PlayerDeath',
 	'AdvanceSave',
-	'bossesWarzone',
 	'AdvanceRookgaard',
 	'PythiusTheRotten',
 	'DropLoot',
 	'Yielothax',
-	'BossParticipation',
 	'Energized Raging Mage',
 	'Raging Mage',
-	'DeathCounter',
-	'KillCounter',
-	'bless1',
 	'lowerRoshamuul',
-	'SpikeTaskQuestCrystal',
-	'SpikeTaskQuestDrillworm',
 	'petlogin',
-	'petthink',
-	'UpperSpikeKill',
-	'MiddleSpikeKill',
-	'LowerSpikeKill',
-	'BossesForgotten',
-	'ReplicaServants',
-	'EnergyPrismDeath',
-	'AstralPower',
-	'BossesKill',
-	'TheShattererKill',
-	'BossesHero',
-	'DragonsKill',
 	'deeplingBosses',
-	'theGreatDragonHuntKill',
 	'ImpactAnalyzer',
-	'bossesMissionCults',
-	'BossesTheCurseSpread',
 }
 
 
@@ -106,18 +64,13 @@ local function onMovementRemoveProtection(cid, oldPosition, time)
 		return true
 	end
 
-		-- prote��o de anti-bomb
+		-- proteï¿½ï¿½o de anti-bomb
 	-- player:setStorageValue(Storage.LoginLogoutExaust, os.stime() + 5)
 
 	addEvent(onMovementRemoveProtection, 1000, cid, oldPosition, time - 1)
 end
 
-function onLogin(player)
-	-- Dream Courts Quest
-	if player:getStorageValue(Storage.DreamCourts.UnsafeRelease.hasBait) == 1 then
-		player:setStorageValue(Storage.DreamCourts.UnsafeRelease.hasBait, - 1)
-	end
-	
+function onLogin(player)	
 	if player:getStorageValue(Storage.isTrainingStorage) >= 1 then
 		player:setStorageValue(Storage.isTrainingStorage, -1)
 	end
@@ -126,11 +79,6 @@ function onLogin(player)
 		entregarQuests(player:getId())
 		player:setStorageValue(ENTREGAR_QUESTS, 1)
 	end
-	
-	-- remover dps
-	player:addOutfit(151)
-	player:addOutfit(155)
-
 	-- VIP System
     -- Grant 3 VIP days if first time
     if player:getAccountStorageValue(2) <= 0 then
@@ -235,7 +183,7 @@ function onLogin(player)
         if boosted.category == "normal" then
             categoryMessage = "Monstro (fraco)"
         elseif boosted.category == "second" then
-            categoryMessage = "Monstro (médio)"
+            categoryMessage = "Monstro (mÃ©dio)"
         elseif boosted.category == "third" then
             categoryMessage = "Monstro (forte)"
         elseif boosted.category == "boss" then
@@ -246,15 +194,10 @@ function onLogin(player)
     end
 
     if #boostMessages > 0 then
-        player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "As seguintes criaturas estão boostadas:\n" ..
+        player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "As seguintes criaturas estÃ£o boostadas:\n" ..
             table.concat(boostMessages, "\n") ..
-            "\nMonstros boostados concedem mais loot, experiência e nascem mais rápido.")
+            "\nMonstros boostados concedem mais loot, experiÃªncia e nascem mais rÃ¡pido.")
     end
-
-	if player:getClient().version == 1100 then
-		player:openChannel(10) -- LOOT CHANNEL
-	end
-
 	-- exercise Weapon
 	player:setStorageValue(37 , -1)
 	player:setStorageValue(38 , -1)
@@ -284,28 +227,25 @@ function onLogin(player)
 	-- EXP Stamina
 	nextUseXpStamina[playerId] = 1
 
-	--daily reward
-	player:initDailyRewardSystem()
-
 
 	if (player:getAccountType() == ACCOUNT_TYPE_TUTOR) then
 		local msg = [[:: Tutor Rules
-	������������1 *> 3 Warnings you lose the job.
-	������������2 *> Without parallel conversations with players in Help, if the player starts offending, you simply mute it.
-	������������3 *> Be educated with the players in Help and especially in the Private, try to help as much as possible.
-	������������4 *> Always be on time, if you do not have a justification you will be removed from the staff.
-	������������5 *> Help is only allowed to ask questions related to tibia.
-	������������6 *> It is not allowed to divulge time up or to help in quest.
-	������������7 *> You are not allowed to sell items in the Help.
-	������������8 *> If the player encounters a bug, ask to go to the website to send a ticket and explain in detail.
-	������������9 *> Always keep the Tutors Chat open. (required).
-	������������10 *> You have finished your schedule, you have no tutor online, you communicate with some CM in-game or ts and stay in the help until someone logs in, if you can.
-	������������11 *> Always keep a good Portuguese in the Help, we want tutors who support, not that they speak a satanic ritual.
-	������������12 *> If you see a tutor doing something that violates the rules, take a print and send it to your superiors. "
-	������������- Commands -
-	������������Mute Player: / mute nick, 90. (90 seconds)
-	������������Unmute Player: / unmute nick.
-	������������- Commands -]]
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1 *> 3 Warnings you lose the job.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2 *> Without parallel conversations with players in Help, if the player starts offending, you simply mute it.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3 *> Be educated with the players in Help and especially in the Private, try to help as much as possible.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½4 *> Always be on time, if you do not have a justification you will be removed from the staff.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½5 *> Help is only allowed to ask questions related to tibia.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½6 *> It is not allowed to divulge time up or to help in quest.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½7 *> You are not allowed to sell items in the Help.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½8 *> If the player encounters a bug, ask to go to the website to send a ticket and explain in detail.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½9 *> Always keep the Tutors Chat open. (required).
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½10 *> You have finished your schedule, you have no tutor online, you communicate with some CM in-game or ts and stay in the help until someone logs in, if you can.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½11 *> Always keep a good Portuguese in the Help, we want tutors who support, not that they speak a satanic ritual.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½12 *> If you see a tutor doing something that violates the rules, take a print and send it to your superiors. "
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½- Commands -
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Mute Player: / mute nick, 90. (90 seconds)
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Unmute Player: / unmute nick.
+	ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½- Commands -]]
 		player:popupFYI(msg)
 	end
 
@@ -324,14 +264,6 @@ function onLogin(player)
 		player:openChannel(3) -- world chat
 		player:openChannel(5) -- advertsing main
 	end
-
-	--
-	-- Rewards
-	local rewards = #player:getRewardList()
-	if(rewards > 0) then
-		player:sendTextMessage(MESSAGE_INFO_DESCR, string.format("You have %d %s in your reward chest.", rewards, rewards > 1 and "rewards" or "reward"))
-	end
-
 	-- Update player id
 	local stats = player:inBossFight()
 	if stats then
@@ -363,3 +295,5 @@ function onLogin(player)
 
 	return true
 end
+
+

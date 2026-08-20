@@ -3135,7 +3135,7 @@ void LuaScriptInterface::registerFunctions()
 
 	registerMethod("MonsterType", "isPet", LuaScriptInterface::luaMonsterTypeIsPet);
 	registerMethod("MonsterType", "isPassive", LuaScriptInterface::luaMonsterTypeIsHostile);
-	registerMethod("MonsterType", "isRewardBoss", LuaScriptInterface::luaMonsterTypeIsRewardBoss);
+
 	registerMethod("MonsterType", "isPreyable", LuaScriptInterface::luaMonsterTypeIsPreyable);
 
 	registerMethod("MonsterType", "respawnType", LuaScriptInterface::luaMonsterTypeRespawnType);
@@ -9361,22 +9361,7 @@ int LuaScriptInterface::luaPlayerGetRewardList(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsRewardBoss(lua_State* L)
-{
-	// get: monsterType:isRewardBoss() set: monsterType:isRewardBoss(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
-		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.isRewardBoss);
-		} else {
-			monsterType->info.isRewardBoss = getBoolean(L, 2);
-			pushBoolean(L, true);
-		}
-	} else {
-		lua_pushnil(L);
-	}
-	return 1;
-}
+
 
 int LuaScriptInterface::luaMonsterTypeIsPreyable(lua_State* L)
 {

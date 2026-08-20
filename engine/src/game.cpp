@@ -4658,12 +4658,10 @@ void Game::playerQuickLoot(uint32_t playerId, const Position& pos, uint16_t spri
 		return;
 	}
 
-	if (!corpse->isRewardCorpse()) {
-		uint32_t corpseOwner = corpse->getCorpseOwner();
-		if (corpseOwner != 0 && !player->canOpenCorpse(corpseOwner)) {
-			player->sendCancelMessage(RETURNVALUE_NOTPOSSIBLE);
-			return;
-		}
+	uint32_t corpseOwner = corpse->getCorpseOwner();
+	if (corpseOwner != 0 && !player->canOpenCorpse(corpseOwner)) {
+		player->sendCancelMessage(RETURNVALUE_NOTPOSSIBLE);
+		return;
 	}
 
 	if (pos.x == 0xffff) {
@@ -4702,11 +4700,7 @@ void Game::playerQuickLoot(uint32_t playerId, const Position& pos, uint16_t spri
 
 		player->lastQuickLootNotification = OTSYS_TIME();
 	} else {
-		if (corpse->isRewardCorpse()) {
-			g_actions->useItem(player, pos, 0, corpse, false);
-		} else {
-			internalQuickLootCorpse(player, corpse);
-		}
+		internalQuickLootCorpse(player, corpse);
 	}
 
 	return;

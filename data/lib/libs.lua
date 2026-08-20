@@ -7,18 +7,10 @@ dofile('data/lib/core/core.lua')
 -- Compatibility library for our old Lua API
 dofile('data/lib/compat/compat.lua')
 
-dofile('data/lib/rewardboss.lua')
-
 dofile('data/lib/guild.lua')
-
-dofile('data/lib/modalwindow.lua')
-
-dofile('data/lib/lionrock.lua')
 
 -- Tables library
 dofile('data/lib/tables/table.lua')
-
--- dofile('data/lib/dailyRewardLib.lua')
 
 dofile('data/lib/customlib/custom.lua')
 dofile('data/lib/customlib/holy-functions.lua')

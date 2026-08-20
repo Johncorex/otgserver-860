@@ -1,4 +1,4 @@
-function dumpvar(data)
+﻿function dumpvar(data)
     -- cache of tables already printed, to avoid infinite recursive loops
     local tablecache = {}
     local buffer = ""
@@ -216,9 +216,6 @@ if nextUseXpStamina == nil then
     nextUseXpStamina = {}
 end
 
-if lastItemImbuing == nil then
-    lastItemImbuing = {}
-end
 
 if nextDelayPreyReroll == nil then
 	nextDelayPreyReroll = {}
@@ -318,78 +315,6 @@ local cid = getNpcCid()
 addEvent(say, delay, {cid = cid, text = text})
 end
 
-function functionRevert()
-Game.setStorageValue(GlobalStorage.FerumbrasAscendantQuest.Habitats.Corrupted, 0)
-Game.setStorageValue(GlobalStorage.FerumbrasAscendantQuest.Habitats.Desert, 0)
-Game.setStorageValue(GlobalStorage.FerumbrasAscendantQuest.Habitats.Dimension, 0)
-Game.setStorageValue(GlobalStorage.FerumbrasAscendantQuest.Habitats.Grass, 0)
-Game.setStorageValue(GlobalStorage.FerumbrasAscendantQuest.Habitats.Ice, 0)
-Game.setStorageValue(GlobalStorage.FerumbrasAscendantQuest.Habitats.Mushroom, 0)
-Game.setStorageValue(GlobalStorage.FerumbrasAscendantQuest.Habitats.Roshamuul, 0)
-Game.setStorageValue(GlobalStorage.FerumbrasAscendantQuest.Habitats.Venom, 0)
-Game.setStorageValue(GlobalStorage.FerumbrasAscendantQuest.Habitats.AllHabitats, 0)
-for a = 1, #basins do
-	local item = Tile(basins[a].pos):getItemById(24852)
-	item:transform(12070)
-end
-local specs, spec = Game.getSpectators(Position(33629, 32693, 12), false, false, 25, 25, 85, 85)
-for i = 1, #specs do
-	spec = specs[i]
-	if spec:isPlayer() then
-		spec:teleportTo(Position(33630, 32648, 12))
-		spec:getPosition():sendMagicEffect(CONST_ME_TELEPORT)
-		spec:sendTextMessage(MESSAGE_EVENT_ADVANCE, 'You were teleported because the habitats are returning to their original form.')
-	elseif spec:isMonster() then
-		spec:remove()
-	end
-end
-for x = 33611, 33625 do
-	for y = 32658, 32727 do
-		local position = Position(x, y, 12)
-		local tile = Tile(position)
-		if not tile then
-			return
-		end
-		local ground = tile:getGround()
-		if not ground then
-			return
-		end
-		ground:remove()
-		local items = tile:getItems()
-		if items then
-			for i = 1, #items do
-				local item = items[i]
-				item:remove()
-			end
-		end
-	end
-end
-
-for x = 33634, 33648 do
-	for y = 32658, 32727 do
-		local position = Position(x, y, 12)
-		local tile = Tile(position)
-		if not tile then
-			return
-		end
-		local ground = tile:getGround()
-		if not ground then
-			return
-		end
-		ground:remove()
-		local items = tile:getItems()
-		if items then
-			for i = 1, #items do
-				local item = items[i]
-				item:remove()
-			end
-		end
-	end
-end
-
-Game.loadMap('data/world/worldchanges/ferumbras_habitats/habitats.otbm')
-return true
-end
 
 function getLootRandom()
 	return math.random(0, MAX_LOOTCHANCE) / configManager.getNumber(configKeys.RATE_LOOT)

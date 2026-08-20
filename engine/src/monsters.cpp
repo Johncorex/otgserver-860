@@ -875,9 +875,7 @@ MonsterType* Monsters::loadMonster(const std::string& file, const std::string& m
 			const char* attrName = attr.name();
 			if (strcasecmp(attrName, "summonable") == 0) {
 				mType->info.isSummonable = attr.as_bool();
-			} else if (strcasecmp(attrName, "rewardboss") == 0) {
-				mType->info.isRewardBoss = attr.as_bool();
-			} else if (strcasecmp(attrName, "preyable") == 0) {
+		} else if (strcasecmp(attrName, "preyable") == 0) {
 				mType->info.isPreyable = attr.as_bool();
 			} else if (strcasecmp(attrName, "attackable") == 0) {
 				mType->info.isAttackable = attr.as_bool();
@@ -1411,7 +1409,7 @@ std::vector<std::string> Monsters::getPreyMonsters()
 {
 	std::vector<std::string> monsterList;
 	for (const auto& m : monsters) {
-		if (m.second.info.experience > 0 && m.second.info.isPreyable && !m.second.info.isRewardBoss && m.second.info.staticAttackChance > 0) {
+		if (m.second.info.experience > 0 && m.second.info.isPreyable && m.second.info.staticAttackChance > 0) {
 			monsterList.push_back(m.first);
 		}
 	}

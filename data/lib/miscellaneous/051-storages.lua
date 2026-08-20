@@ -1,4 +1,4 @@
--- STORAGES --
+﻿-- STORAGES --
 -- (HIGHLY RECOMMENDED -> ONE mission per STORAGE) --
 -- Sort it in Values -
 
@@ -75,18 +75,6 @@ Modal = {
 		[14] = 7029, -- guild rival
 	},
 
-	Cyclopedia = {
-		Bestiary = {
-			[1] = 7128,
-			[2] = 7129,
-			[3] = 7130,
-			[4] = 7132,
-		},
-		Charm = {
-			[1] = 7133,
-			[2] = 7134,
-		}
-	},
 
 
 }
@@ -347,8 +335,8 @@ Storage = {
 	Questline = 800,
 		Dwarves = {
 			Status = 897,
-			Home = 801, -- Missão
-			Subterranean = 802, -- Missão
+			Home = 801, -- MissÃ£o
+			Subterranean = 802, -- MissÃ£o
 			LostExiles = 803,
 			Prisoners = 804,
 			Organisms = 805,
@@ -359,8 +347,8 @@ Storage = {
 		},
 		Scouts = {
 			Status = 899,
-			Diremaw = 810, -- Missão
-			Growth = 811, -- Missão
+			Diremaw = 810, -- MissÃ£o
+			Growth = 811, -- MissÃ£o
 			DiremawsCount = 812,
 			GnomishChest = 813,
 			BarrelCount = 814,
@@ -376,9 +364,9 @@ Storage = {
 		},
 		Gnomes = {
 			Status = 898,
-			Ordnance = 824, -- Missão
-			Measurements = 825, -- Missão
-			Charting = 826, -- Missão
+			Ordnance = 824, -- MissÃ£o
+			Measurements = 825, -- MissÃ£o
+			Charting = 826, -- MissÃ£o
 			GnomeChartChest = 827, -- Measurements
 			GnomeChartPaper = 828, -- Charting
 			GnomesCount = 829, -- Ordnance
@@ -1618,7 +1606,6 @@ Storage = {
 	spiritHuntersQuest = {
 		missionUm = 165163,
 		tombsUse = 165164,
-		charmUse = 165165,
 		nightstalkerUse = 165166,
 		souleaterUse = 165167,
 		ghostUse = 165168
@@ -1712,13 +1699,6 @@ Storage = {
 	blockMovementStorage = 100000,
 	PetSummon = 60045,
 
-	dailyReward = {
-		nextRewardPick = DAILYREWARDSTORAGE_NEXTREWARDPICK,
-		lastRewardPick = DAILYREWARDSTORAGE_LASTREWARDPICK,
-		streakDays = DAILYREWARDSTORAGE_STREAKDAYS,
-		exhaust = 69802,
-		currentIndex = 69803
-	},
 
 	StoreExaust = 6989912,
 
