@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <globalevents>
 	<globalevent name="anuncios30" interval="1800000" script="anuncios30.lua" />
 
@@ -6,7 +6,6 @@
 	<globalevent name="hirelingSave" type="shutdown" script="others/hireling_save.lua"/>
 	
 	<!-- Scarllet Etzel -->
-	<globalevent name="randomMirrors" interval="20000" script="quests/grave_danger/cobra_bastion/randomMirrors.lua" />
 
 	<!-- Morgathla -->
 	<globalevent name="morgathlaTiles" interval="15000" script="morgathlaTiles.lua" />
@@ -41,14 +40,11 @@
 	<globalevent name="earthTrap" interval="3000" script="dreamCourts.lua" />
 
 	<!-- Ferumbras Ascendant -->
-	<globalevent name="Effect" interval="3000" script="quests/ferumbras ascedant/effect.lua"/>
-	<globalevent name="Effcts" interval="4000" script="quests/ferumbras ascedant/effects.lua"/>
 
 	<!-- Blooming Griffinclaw -->
 	<globalevent name="GriffinclawFlower" type="startup" script="others/griffinclawFlower.lua" />
 
 	<!-- Demon Oak -->
-	<globalevent name="DemonOakVoices" interval="15000" script="quests/demon oak/voices.lua" />
 
 	<!-- Rent Horses -->
 	<globalevent name="RentedMounts" interval="15000" script="others/checkMount.lua" />
