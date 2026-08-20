@@ -22,8 +22,8 @@ set -o pipefail
 while true 		#repetir pra sempre
 do
  	#roda o server e guarda o output ou qualquer erro no logs
-	#PS: o arquivo gdb_config deve estar na pasta do tfs
-	gdb --batch -return-child-result --command=gdb_config --args ./tfs 2>&1 | awk '{ print strftime("%F %T - "), $0; fflush(); }' | tee "logs/$(date +"%F %H-%M-%S.log")"
+	#PS: o arquivo gdb_config deve estar na pasta do otg
+	gdb --batch -return-child-result --command=gdb_config --args ./otg 2>&1 | awk '{ print strftime("%F %T - "), $0; fflush(); }' | tee "logs/$(date +"%F %H-%M-%S.log")"
 	mysqldump -u$usersql -p$sqlpassword --add-drop-table --add-locks --allow-keywords --extended-insert --quick --compress $servername > /var/server/database/$databasefile
 	gzip /var/server/database/$databasefile-f
 	 

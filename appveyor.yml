@@ -36,6 +36,6 @@ cache:
   - c:\tools\vcpkg\installed\
 
 artifacts:
-  - path: \engine\vc17\**\theforgottenserver*.exe
+  - path: \engine\vc17\**\otg*.exe
   - path: \engine\vc17\**\*.dll
   - path: Otg.zip

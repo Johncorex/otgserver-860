@@ -12,13 +12,13 @@ vcpkg_installed/
 # Personal Config Files
 config.lua
 client_assertions.txt
-bin/tfs
-/tfs
+bin/otg
+/otg
 *.otbm:Zone.Identifier
 otgmap.otbm
 
 # OTG Server specific
-theforgottenserver.exe
+otg*.exe
 *.otbm
 logs/
 data/reports/
