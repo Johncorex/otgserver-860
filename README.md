@@ -2,13 +2,6 @@
 
 # OTG Server 8.60
 
-⚠️ Para logar usando o **OTCv8**, é necessário ativar as funcionalidades do cliente no arquivo:
-`/modules/game_features/features.lua`
-
-g_game.enableFeature(GameMagicEffectU16) -- Necessário para efeitos acima de 65.535 (65kk+)
-
----
-
 # ✨ Por que usar o OTG Server 8.60?
 
 O **OTG Server 8.60** é a nossa base OpenTibia com **suporte nativo ao cliente 8.6** — protocolo
@@ -23,8 +16,8 @@ estabilidade e os sistemas modernos que a engine OTG já oferece.
 - **🧭 Pathfinder otimizado** — busca de caminho mais rápida e com bem menos alocações, deixando monstros e NPCs muito mais responsivos.
 - **👀 `getSpectator` otimizado** — varredura de espectadores muito mais eficiente, cortando o custo dos broadcasts de pacotes no mundo.
 - **💀 `onDecay` otimizado** — gerenciamento de decay de itens mais leve, menos gargalos em áreas com muito loot.
-- **🛡️ Base limpa e estável** — código revisado, livre de modificações maliciosas, compatível com sistemas modernos:
-  **Store System, Imbuements, Prey, Market, Trade NPC, Charms, Bestiary**.
+- **🛡️ Base limpa e estável** — código revisado, livre de modificações maliciosas, compatível com sistemas e clients modernos:
+  **Otc Redemption, Otcv8, Store System, Imbuements, Prey, Market, Trade NPC, Charms, Bestiary**.
 
 ## 💙 Um projeto feito com carinho
 
@@ -123,6 +116,6 @@ https://github.com/Johncorex/otgserver-860/issues
 
 ### 🙏 Agradecimentos Especiais — Special Thanks
 
-- Erick Nunes, Johncore, Leonardo Pereira, worthdavi, marson schneider, LukST, guibruxo, Mateus Roberto
-- Contribuidores do projeto
-- otland/forgottenserver and contributors.
+- Johncorex
+- Colaboradores Otg Server
+- otland/forgottenserver
