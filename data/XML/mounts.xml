@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mounts>
+	<!-- Mounts DISABLED for 8.6: the native 8.6 client has no mount system.
+	     Engine mount code (mounts.cpp) and all definitions below are kept intact;
+	     they become usable once a 8.6 client mount DLL is added. No clientid
+	     remap to 8.6 was done on purpose. -->
 	<mount id="1" clientid="368" name="Widow Queen" speed="20" premium="yes" />
 	<mount id="2" clientid="369" name="Racing Bird" speed="20" premium="yes" />
 	<mount id="3" clientid="370" name="War Bear" speed="20" premium="yes" />
