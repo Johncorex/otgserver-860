@@ -21,9 +21,9 @@
 #define FS_DEFINITIONS_H_877452FEC245450C9F96B8FD268D8963
 
 static constexpr auto STATUS_SERVER_NAME = "Otg Server";
-static constexpr auto STATUS_SERVER_VERSION = "1.4 (Protocol 1100)";
-static constexpr auto STATUS_SERVER_CREDITS = "TFS Team, Erick Nunes, Leo Pereira, Marson Schneider, LukST, worthdavi, OTX Team, OTG Team";
-static constexpr auto STATUS_SERVER_CONTRIBUTORS = "Johncore, Mark Samman and Mateuskl (Mateus Roberto)";
+static constexpr auto STATUS_SERVER_VERSION = "1.5 (Protocol 860)";
+static constexpr auto STATUS_SERVER_CREDITS = "Otg colaborators, Erick Nunes, Mateus Roberto, Leo Pereira, Marson Schneider, LukST, worthdavi, TFS Team";
+static constexpr auto STATUS_SERVER_CONTRIBUTORS = "a server developed by Johncorex";
 
 // 8.6 native protocol (nekiro-style backend, XTEA+RSA wire, 8.6 packet serialization)
 static constexpr auto CLIENT_VERSION_MIN = 860;
