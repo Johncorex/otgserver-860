@@ -15,8 +15,8 @@ dofile('data/lib/miscellaneous/killingInTheNameOfQuest.lua')
 dofile('data/lib/miscellaneous/svargrondArenaQuest.lua')
 dofile('data/lib/miscellaneous/achievements_lib.lua')
 
---daily reward lib
-dofile('data/lib/miscellaneous/dailyreward_lib.lua')
+--daily reward lib (feature from Tibia 11+, not available in 8.6)
+--dofile('data/lib/miscellaneous/dailyreward_lib.lua')
 
---hirelings
-dofile('data/lib/miscellaneous/hireling_lib.lua')
+--hirelings (feature from Tibia 11+, not available in 8.6)
+--dofile('data/lib/miscellaneous/hireling_lib.lua')

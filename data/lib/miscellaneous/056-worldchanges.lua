@@ -20,7 +20,8 @@ local function setBoards()
 			str = str .. Worldchanges[i].name.."\n"
 		end
 	end
-	local board = Tile(boardInfo.position):getItemById(boardInfo.itemId)
+	local tile = Tile(boardInfo.position)
+	local board = tile and tile:getItemById(boardInfo.itemId)
 	if board then
 		board:setAttribute(ITEM_ATTRIBUTE_DESCRIPTION, str)
 	end

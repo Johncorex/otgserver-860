@@ -4,7 +4,7 @@ event.onSpawn = function(monster, position, startup, artificial)
 		return false
 	end
 
-	if monster:getType():isRewardBoss() then
+	if monster:getType().isRewardBoss and monster:getType():isRewardBoss() then
 		monster:setReward(true)
 	end
 

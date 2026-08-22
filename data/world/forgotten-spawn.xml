@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <spawns>
 	<spawn centerx="149" centery="574" centerz="2" radius="5">
 		<monster name="Dragon Lord" x="0" y="0" z="2" spawntime="60" />
